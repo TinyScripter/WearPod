@@ -32,7 +32,8 @@ data class WatchPlayerUiState(
     val duration: Int = 0,
     val isPlaying: Boolean = false,
     val hasNext: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val hasError: Boolean = false
 )
 
 class WatchPlayerViewModel(application: Application, private val itemId: Long) : AndroidViewModel(application) {
@@ -111,7 +112,8 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
             duration = controller.duration.coerceAtLeast(0).toInt(),
             isPlaying = controller.isPlaying,
             hasNext = controller.hasNextMediaItem(),
-            isLoading = isStarting
+            isLoading = isStarting,
+            hasError = controller.playerError != null
         )
     }
 

@@ -142,12 +142,21 @@ fun WatchPlayerScreen(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(
-                text = Converter.getDurationStringLong(uiState.position) + " / " +
-                    Converter.getDurationStringLong(uiState.duration),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.outline
-            )
+            if (uiState.hasError) {
+                Text(
+                    text = stringResource(CommonR.string.wearos_playback_failed),
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error
+                )
+            } else {
+                Text(
+                    text = Converter.getDurationStringLong(uiState.position) + " / " +
+                        Converter.getDurationStringLong(uiState.duration),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically

@@ -55,6 +55,7 @@ class WatchListActivity : ComponentActivity() {
 @Composable
 fun downloadStatusText(episode: WatchEpisode, progress: Int): String? = when (episode.status) {
     DownloadStatus.QUEUED -> stringResource(CommonR.string.download_pending)
+    DownloadStatus.WAITING_FOR_WIFI -> stringResource(CommonR.string.wearos_waiting_for_wifi)
     DownloadStatus.DOWNLOADING -> stringResource(CommonR.string.wearos_downloading, progress)
     DownloadStatus.FAILED -> stringResource(CommonR.string.wearos_download_failed)
     DownloadStatus.DOWNLOADED -> null

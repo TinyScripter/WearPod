@@ -51,8 +51,9 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
             val network = withTimeoutOrNull(WIFI_TIMEOUT) { wifi.await() }
             if (network == null && connectivityManager.isActiveNetworkMetered && !BuildConfig.DEBUG) {
                 Log.d(TAG, "No Wi-Fi and the active network is metered")
-                return retryOrFail(itemId)
+                return retryOrFail(itemId, DownloadStatus.WAITING_FOR_WIFI)
             }
+            Log.d(TAG, "Downloading episode $itemId using " + if (network != null) "Wi-Fi" else "the active network")
             WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.DOWNLOADING) }
             val size = withContext(Dispatchers.IO) { download(episode, network) }
             WatchEpisodeStore.update(applicationContext, itemId) {
@@ -61,7 +62,7 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
             return Result.success()
         } catch (e: IOException) {
             Log.e(TAG, "Download of episode $itemId failed", e)
-            return retryOrFail(itemId)
+            return retryOrFail(itemId, DownloadStatus.QUEUED)
         } finally {
             connectivityManager.unregisterNetworkCallback(callback)
             if (WatchEpisodeStore.get(applicationContext, itemId) == null) {
@@ -117,10 +118,10 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
         }
     }
 
-    private fun retryOrFail(itemId: Long): Result {
+    private fun retryOrFail(itemId: Long, retryStatus: DownloadStatus): Result {
         val retry = runAttemptCount < MAX_RETRIES
         WatchEpisodeStore.update(applicationContext, itemId) {
-            it.copy(status = if (retry) DownloadStatus.QUEUED else DownloadStatus.FAILED)
+            it.copy(status = if (retry) retryStatus else DownloadStatus.FAILED)
         }
         return if (retry) Result.retry() else Result.failure()
     }

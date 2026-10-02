@@ -3,7 +3,7 @@ package de.danoeh.antennapod.wearos.download
 import de.danoeh.antennapod.model.feed.FeedItem
 import org.json.JSONObject
 
-enum class DownloadStatus { QUEUED, DOWNLOADING, DOWNLOADED, FAILED }
+enum class DownloadStatus { QUEUED, WAITING_FOR_WIFI, DOWNLOADING, DOWNLOADED, FAILED }
 
 enum class PhoneState { UNPLAYED, PLAYED, DELETED }
 

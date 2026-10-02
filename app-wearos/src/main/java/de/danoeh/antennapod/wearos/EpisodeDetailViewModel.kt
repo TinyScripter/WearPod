@@ -38,7 +38,8 @@ data class EpisodeDetailUiState(
     val canDownloadToWatch: Boolean = false,
     val watchEpisode: WatchEpisode? = null,
     val downloadProgress: Int = 0,
-    val watchErrorRes: Int? = null
+    val watchErrorRes: Int? = null,
+    val isRequestingDownload: Boolean = false
 )
 
 class EpisodeDetailViewModel(application: Application, private val episode: FeedItem) : AndroidViewModel(application) {
@@ -94,8 +95,11 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
     }
 
     fun downloadToWatch() {
+        if (_uiState.value.isRequestingDownload) {
+            return
+        }
         viewModelScope.launch {
-            _uiState.update { it.copy(watchErrorRes = null) }
+            _uiState.update { it.copy(watchErrorRes = null, isRequestingDownload = true) }
             WearMessageSender.send(getApplication(), WearDataPaths.episodeDetailsPath(episode.id))
             val details = withTimeoutOrNull(10.seconds) {
                 WearDataRepository.episodeDetails.first { it.containsKey(episode.id) }
@@ -137,6 +141,8 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
                 WatchEpisodeStore.put(getApplication(), watchEpisode)
                 EpisodeDownloadWorker.enqueue(getApplication(), watchEpisode.itemId)
             }
+        }.invokeOnCompletion {
+            _uiState.update { it.copy(isRequestingDownload = false) }
         }
     }
 

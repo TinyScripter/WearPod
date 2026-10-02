@@ -234,7 +234,11 @@ fun EpisodeDetailScreen(
                     ListItem(
                         text = stringResource(CommonR.string.wearos_download_to_watch),
                         iconRes = CommonR.drawable.ic_download_black,
-                        secondaryText = watchEpisode?.let { downloadStatusText(it, uiState.downloadProgress) },
+                        secondaryText = if (uiState.isRequestingDownload) {
+                            stringResource(CommonR.string.download_pending)
+                        } else {
+                            watchEpisode?.let { downloadStatusText(it, uiState.downloadProgress) }
+                        },
                         onClick = onDownloadToWatch
                     )
                 }
