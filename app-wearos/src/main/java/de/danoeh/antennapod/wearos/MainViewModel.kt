@@ -26,6 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val name = WearConnectionUtils.getConnectedNodeName(getApplication())
             _uiState.update { it.copy(connectedPhone = name) }
+            WearMessageSender.send(getApplication(), WearDataPaths.SETTINGS)
         }
 
         viewModelScope.launch {

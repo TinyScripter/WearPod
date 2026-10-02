@@ -22,3 +22,11 @@ Use this to trigger actions (playback control) or to request data (the phone the
 The list is persisted as a JSON file in the app's files directory, so it is available without the phone.
 `EpisodeDownloadWorker` downloads the media file of one episode directly from its original URL to `files/episodes`.
 It requests a Wi-Fi network first and refuses to download over metered networks (except in debug builds, as the emulator only has a metered network).
+
+## Playback on the Watch
+
+`WatchPlaybackService` is a Media3 `MediaSessionService` that plays the downloaded episodes without the phone.
+The playlist consists of the downloaded episodes in the order of `WatchEpisodeStore`, the media id of each item is the episode id.
+The service stores the playback position in `WatchEpisodeStore` and removes an episode from the watch when it has been played completely.
+Skip amounts and playback speed are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
+`WatchPlayerViewModel` connects to the service using a `MediaController`.

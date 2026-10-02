@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.wearos
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +35,12 @@ class WatchListActivity : ComponentActivity() {
                 val uiState by viewModel.uiState.collectAsState()
                 WatchListScreen(
                     uiState = uiState,
+                    onPlay = { itemId ->
+                        val intent = Intent(this, WatchPlayerActivity::class.java).apply {
+                            putExtra(WatchPlayerActivity.EXTRA_ITEM_ID, itemId)
+                        }
+                        startActivity(intent)
+                    },
                     onRetry = { viewModel.retry(it) },
                     onRemove = { viewModel.remove(it) }
                 )
@@ -51,7 +58,12 @@ fun downloadStatusText(episode: WatchEpisode, progress: Int): String? = when (ep
 }
 
 @Composable
-fun WatchListScreen(uiState: WatchListUiState, onRetry: (Long) -> Unit, onRemove: (Long) -> Unit) {
+fun WatchListScreen(
+    uiState: WatchListUiState,
+    onPlay: (Long) -> Unit,
+    onRetry: (Long) -> Unit,
+    onRemove: (Long) -> Unit
+) {
     val scrollState = rememberScalingLazyListState()
     var menuEpisode by remember { mutableStateOf<WatchEpisode?>(null) }
     var menuVisible by remember { mutableStateOf(false) }
@@ -65,13 +77,21 @@ fun WatchListScreen(uiState: WatchListUiState, onRetry: (Long) -> Unit, onRemove
         isEmpty = uiState.episodes.isEmpty()
     ) {
         items(uiState.episodes) { episode ->
+            val openMenu = {
+                menuEpisode = episode
+                menuVisible = true
+            }
             ListItem(
                 text = episode.title,
                 secondaryText = downloadStatusText(episode, uiState.progress[episode.itemId] ?: 0)
                     ?: episode.feedTitle.ifEmpty { null },
+                onLongClick = openMenu,
                 onClick = {
-                    menuEpisode = episode
-                    menuVisible = true
+                    if (episode.status == DownloadStatus.DOWNLOADED) {
+                        onPlay(episode.itemId)
+                    } else {
+                        openMenu()
+                    }
                 }
             )
         }

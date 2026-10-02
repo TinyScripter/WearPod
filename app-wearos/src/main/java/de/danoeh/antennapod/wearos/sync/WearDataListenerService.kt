@@ -5,6 +5,7 @@ import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.net.sync.wearinterface.WearSerializer
+import de.danoeh.antennapod.wearos.playback.WatchSettingsStore
 
 class WearDataListenerService : WearableListenerService() {
     override fun onMessageReceived(event: MessageEvent) {
@@ -17,8 +18,11 @@ class WearDataListenerService : WearableListenerService() {
             }
             WearDataPaths.NOW_PLAYING ->
                 WearDataRepository.updateNowPlaying(WearSerializer.nowPlayingFromBytes(event.data))
-            WearDataPaths.SETTINGS ->
-                WearDataRepository.updateSettings(WearSerializer.settingsFromBytes(event.data))
+            WearDataPaths.SETTINGS -> {
+                val settings = WearSerializer.settingsFromBytes(event.data)
+                WearDataRepository.updateSettings(settings)
+                settings?.let { WatchSettingsStore.save(this, it) }
+            }
             WearDataPaths.QUEUE, WearDataPaths.DOWNLOADS, WearDataPaths.EPISODES, WearDataPaths.POSITIONS -> {
                 val items = WearSerializer.episodesFromBytes(event.data)
                 Log.d(TAG, "Received $path: ${items.size} episodes")

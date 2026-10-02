@@ -19,10 +19,17 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 
 @Composable
-fun ListItem(text: String, @DrawableRes iconRes: Int? = null, secondaryText: String? = null, onClick: () -> Unit) {
+fun ListItem(
+    text: String,
+    @DrawableRes iconRes: Int? = null,
+    secondaryText: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
     FilledTonalButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onLongClick = onLongClick
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
