@@ -54,6 +54,12 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun move(itemId: Long, newIndex: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            WatchEpisodeStore.move(getApplication(), itemId, newIndex)
+        }
+    }
+
     fun removePlayed() {
         _uiState.value.episodes.filter { it.phoneState != PhoneState.UNPLAYED }.forEach { remove(it.itemId) }
     }

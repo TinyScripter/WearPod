@@ -83,6 +83,20 @@ object WatchEpisodeStore {
     }
 
     @Synchronized
+    fun move(context: Context, itemId: Long, newIndex: Int) {
+        load(context)
+        val episodes = _episodes.value.toMutableList()
+        val index = episodes.indexOfFirst { it.itemId == itemId }
+        if (index < 0) {
+            return
+        }
+        val episode = episodes.removeAt(index)
+        episodes.add(newIndex.coerceIn(0, episodes.size), episode)
+        _episodes.value = episodes
+        save(context)
+    }
+
+    @Synchronized
     fun applyPhoneStates(context: Context, requestedIds: List<Long>, states: List<FeedItem>) {
         load(context)
         val statesById = states.associateBy { it.id }

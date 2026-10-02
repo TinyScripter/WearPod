@@ -22,6 +22,9 @@ import com.google.common.util.concurrent.ListenableFuture
 import de.danoeh.antennapod.net.sync.wearinterface.WearPosition
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.WatchPlayerActivity
+import de.danoeh.antennapod.wearos.download.DownloadStatus
+import de.danoeh.antennapod.wearos.download.PhoneState
+import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
 import de.danoeh.antennapod.wearos.sync.PositionReporter
 import kotlin.time.Duration.Companion.seconds
@@ -43,6 +46,7 @@ class WatchPlaybackService : MediaSessionService() {
     private lateinit var mediaSession: MediaSession
     private var startPosition = 0
     private val lastSavedTimestamps = mutableMapOf<Long, Long>()
+    private val completedItemIds = mutableSetOf<Long>()
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -107,17 +111,44 @@ class WatchPlaybackService : MediaSessionService() {
             mediaItems.mapNotNull { item ->
                 val itemId = item.mediaId.toLongOrNull() ?: return@mapNotNull null
                 val episode = WatchEpisodeStore.get(this@WatchPlaybackService, itemId) ?: return@mapNotNull null
-                item.buildUpon()
-                    .setUri(WatchEpisodeStore.getFile(this@WatchPlaybackService, episode).toUri())
-                    .setMediaMetadata(
-                        MediaMetadata.Builder()
-                            .setTitle(episode.title)
-                            .setArtist(episode.feedTitle)
-                            .build()
-                    )
-                    .build()
+                buildMediaItem(episode)
             }.toMutableList()
         )
+    }
+
+    private fun buildMediaItem(episode: WatchEpisode): MediaItem = MediaItem.Builder()
+        .setMediaId(episode.itemId.toString())
+        .setUri(WatchEpisodeStore.getFile(this, episode).toUri())
+        .setMediaMetadata(
+            MediaMetadata.Builder()
+                .setTitle(episode.title)
+                .setArtist(episode.feedTitle)
+                .build()
+        )
+        .build()
+
+    private fun updatePlaylist(episodes: List<WatchEpisode>) {
+        completedItemIds.retainAll(episodes.map { it.itemId }.toSet())
+        val currentItemId = player.currentMediaItem?.mediaId?.toLongOrNull() ?: return
+        val playlist = episodes.filter {
+            it.status == DownloadStatus.DOWNLOADED && it.itemId !in completedItemIds &&
+                (it.phoneState == PhoneState.UNPLAYED || it.itemId == currentItemId)
+        }
+        val currentIndex = playlist.indexOfFirst { it.itemId == currentItemId }
+        if (currentIndex < 0) {
+            if (currentItemId !in completedItemIds) {
+                player.removeMediaItem(player.currentMediaItemIndex)
+            }
+            return
+        }
+        val playerItemIds = (0 until player.mediaItemCount).map { player.getMediaItemAt(it).mediaId }
+        if (playerItemIds == playlist.map { it.itemId.toString() }) {
+            return
+        }
+        player.removeMediaItems(player.currentMediaItemIndex + 1, player.mediaItemCount)
+        player.removeMediaItems(0, player.currentMediaItemIndex)
+        player.addMediaItems(0, playlist.subList(0, currentIndex).map { buildMediaItem(it) })
+        player.addMediaItems(playlist.subList(currentIndex + 1, playlist.size).map { buildMediaItem(it) })
     }
 
     override fun onCreate() {
@@ -153,6 +184,10 @@ class WatchPlaybackService : MediaSessionService() {
         val notificationProvider = DefaultMediaNotificationProvider.Builder(this).build()
         notificationProvider.setSmallIcon(NotificationsR.drawable.ic_notification)
         setMediaNotificationProvider(notificationProvider)
+
+        mainScope.launch {
+            WatchEpisodeStore.episodes.collect { updatePlaylist(it) }
+        }
 
         mainScope.launch {
             while (true) {
@@ -210,6 +245,7 @@ class WatchPlaybackService : MediaSessionService() {
     }
 
     private fun complete(itemId: Long) {
+        completedItemIds.add(itemId)
         val duration = WatchEpisodeStore.get(this, itemId)?.duration ?: 0
         savePosition(itemId, duration.toLong(), true)
         val index = (0 until player.mediaItemCount).firstOrNull {

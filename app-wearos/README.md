@@ -27,6 +27,7 @@ It requests a Wi-Fi network first and refuses to download over metered networks 
 
 `WatchPlaybackService` is a Media3 `MediaSessionService` that plays the downloaded episodes without the phone.
 The playlist consists of the downloaded episodes in the order of `WatchEpisodeStore`, the media id of each item is the episode id.
+The service observes `WatchEpisodeStore` and updates the playlist around the current episode when episodes are moved, added or removed.
 The service stores the playback position in `WatchEpisodeStore` and removes an episode from the watch when it has been played completely.
 Skip amounts and playback speed are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
 `WatchPlayerViewModel` connects to the service using a `MediaController`.

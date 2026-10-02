@@ -43,6 +43,7 @@ class WatchListActivity : ComponentActivity() {
                         startActivity(intent)
                     },
                     onRetry = { viewModel.retry(it) },
+                    onMove = { itemId, newIndex -> viewModel.move(itemId, newIndex) },
                     onRemove = { viewModel.remove(it) },
                     onRemovePlayed = { viewModel.removePlayed() }
                 )
@@ -64,6 +65,7 @@ fun WatchListScreen(
     uiState: WatchListUiState,
     onPlay: (Long) -> Unit,
     onRetry: (Long) -> Unit,
+    onMove: (Long, Int) -> Unit,
     onRemove: (Long) -> Unit,
     onRemovePlayed: () -> Unit
 ) {
@@ -126,6 +128,40 @@ fun WatchListScreen(
                     text = stringResource(CommonR.string.retry_label),
                     onClick = {
                         onRetry(episode.itemId)
+                        menuVisible = false
+                    }
+                )
+            }
+        }
+        val index = uiState.episodes.indexOfFirst { it.itemId == episode.itemId }
+        if (index > 0) {
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.wearos_move_up),
+                    onClick = {
+                        onMove(episode.itemId, index - 1)
+                        menuVisible = false
+                    }
+                )
+            }
+        }
+        if (index in 0 until uiState.episodes.lastIndex) {
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.wearos_move_down),
+                    onClick = {
+                        onMove(episode.itemId, index + 1)
+                        menuVisible = false
+                    }
+                )
+            }
+        }
+        if (index > 0) {
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.move_to_top_label),
+                    onClick = {
+                        onMove(episode.itemId, 0)
                         menuVisible = false
                     }
                 )
