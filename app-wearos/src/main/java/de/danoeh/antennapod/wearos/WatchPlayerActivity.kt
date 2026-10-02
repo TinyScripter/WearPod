@@ -70,6 +70,10 @@ fun WatchPlayerScreen(
     onNext: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+            return@Box
+        }
         if (uiState.title.isEmpty()) {
             Text(text = stringResource(CommonR.string.no_media_playing_label), textAlign = TextAlign.Center)
             return@Box

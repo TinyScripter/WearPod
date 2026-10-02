@@ -23,6 +23,7 @@ import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.wearos.composable.ListItem
 import de.danoeh.antennapod.wearos.composable.ListScaffold
 import de.danoeh.antennapod.wearos.download.DownloadStatus
+import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 
 class WatchListActivity : ComponentActivity() {
@@ -42,7 +43,8 @@ class WatchListActivity : ComponentActivity() {
                         startActivity(intent)
                     },
                     onRetry = { viewModel.retry(it) },
-                    onRemove = { viewModel.remove(it) }
+                    onRemove = { viewModel.remove(it) },
+                    onRemovePlayed = { viewModel.removePlayed() }
                 )
             }
         }
@@ -62,7 +64,8 @@ fun WatchListScreen(
     uiState: WatchListUiState,
     onPlay: (Long) -> Unit,
     onRetry: (Long) -> Unit,
-    onRemove: (Long) -> Unit
+    onRemove: (Long) -> Unit,
+    onRemovePlayed: () -> Unit
 ) {
     val scrollState = rememberScalingLazyListState()
     var menuEpisode by remember { mutableStateOf<WatchEpisode?>(null) }
@@ -81,9 +84,15 @@ fun WatchListScreen(
                 menuEpisode = episode
                 menuVisible = true
             }
+            val phoneStateText = when (episode.phoneState) {
+                PhoneState.PLAYED -> stringResource(CommonR.string.is_played)
+                PhoneState.DELETED -> stringResource(CommonR.string.wearos_deleted_on_phone)
+                PhoneState.UNPLAYED -> null
+            }
             ListItem(
                 text = episode.title,
                 secondaryText = downloadStatusText(episode, uiState.progress[episode.itemId] ?: 0)
+                    ?: phoneStateText
                     ?: episode.feedTitle.ifEmpty { null },
                 onLongClick = openMenu,
                 onClick = {
@@ -94,6 +103,14 @@ fun WatchListScreen(
                     }
                 }
             )
+        }
+        if (uiState.episodes.any { it.phoneState != PhoneState.UNPLAYED }) {
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.delete_downloads_played),
+                    onClick = onRemovePlayed
+                )
+            }
         }
     }
 

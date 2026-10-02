@@ -37,6 +37,10 @@ object WearDataRepository {
         _episodesByPath.update { it + (path to items) }
     }
 
+    fun clearEpisodes(path: String) {
+        _episodesByPath.update { it - path }
+    }
+
     fun updateFeeds(path: String, feeds: List<Feed>) {
         _feedsByPath.update { it + (path to feeds) }
     }

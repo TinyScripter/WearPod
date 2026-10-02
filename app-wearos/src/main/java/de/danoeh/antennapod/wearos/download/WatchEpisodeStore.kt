@@ -5,6 +5,7 @@ import android.util.AtomicFile
 import android.util.Log
 import androidx.core.util.readText
 import androidx.core.util.writeText
+import de.danoeh.antennapod.model.feed.FeedItem
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,6 +79,16 @@ object WatchEpisodeStore {
     fun update(context: Context, itemId: Long, transform: (WatchEpisode) -> WatchEpisode) {
         load(context)
         _episodes.value = _episodes.value.map { if (it.itemId == itemId) transform(it) else it }
+        save(context)
+    }
+
+    @Synchronized
+    fun applyPhoneStates(context: Context, requestedIds: List<Long>, states: List<FeedItem>) {
+        load(context)
+        val statesById = states.associateBy { it.id }
+        _episodes.value = _episodes.value.map {
+            if (it.itemId in requestedIds) it.withPhoneState(statesById[it.itemId]) else it
+        }
         save(context)
     }
 

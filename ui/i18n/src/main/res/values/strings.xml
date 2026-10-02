@@ -1070,4 +1070,5 @@
     <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Remove from watch</string>
     <string name="wearos_downloading" tools:ignore="UnusedResources">Downloading (%1$d%%)</string>
     <string name="wearos_download_failed" tools:ignore="UnusedResources">Download failed</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Deleted on phone</string>
 </resources>

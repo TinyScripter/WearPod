@@ -1,8 +1,11 @@
 package de.danoeh.antennapod.wearos.download
 
+import de.danoeh.antennapod.model.feed.FeedItem
 import org.json.JSONObject
 
 enum class DownloadStatus { QUEUED, DOWNLOADING, DOWNLOADED, FAILED }
+
+enum class PhoneState { UNPLAYED, PLAYED, DELETED }
 
 data class WatchEpisode(
     val itemId: Long,
@@ -15,8 +18,25 @@ data class WatchEpisode(
     val lastPlayed: Long,
     val size: Long,
     val fileName: String,
-    val status: DownloadStatus
+    val status: DownloadStatus,
+    val phoneState: PhoneState = PhoneState.UNPLAYED
 ) {
+    fun withPhoneState(state: FeedItem?): WatchEpisode {
+        if (state == null) {
+            return copy(phoneState = PhoneState.DELETED)
+        }
+        val newPhoneState = if (state.isPlayed) PhoneState.PLAYED else PhoneState.UNPLAYED
+        val phoneLastPlayed = state.media?.lastPlayedTimeHistory?.time ?: 0
+        if (phoneLastPlayed <= lastPlayed) {
+            return copy(phoneState = newPhoneState)
+        }
+        return copy(
+            position = state.media?.position ?: position,
+            lastPlayed = phoneLastPlayed,
+            phoneState = newPhoneState
+        )
+    }
+
     fun toJson(): JSONObject = JSONObject()
         .put(KEY_ITEM_ID, itemId)
         .putOpt(KEY_GUID, guid)
@@ -29,6 +49,7 @@ data class WatchEpisode(
         .put(KEY_SIZE, size)
         .put(KEY_FILE_NAME, fileName)
         .put(KEY_STATUS, status.name)
+        .put(KEY_PHONE_STATE, phoneState.name)
 
     companion object {
         private const val KEY_ITEM_ID = "item_id"
@@ -42,6 +63,7 @@ data class WatchEpisode(
         private const val KEY_SIZE = "size"
         private const val KEY_FILE_NAME = "file_name"
         private const val KEY_STATUS = "status"
+        private const val KEY_PHONE_STATE = "phone_state"
 
         fun fromJson(obj: JSONObject) = WatchEpisode(
             itemId = obj.getLong(KEY_ITEM_ID),
@@ -54,7 +76,8 @@ data class WatchEpisode(
             lastPlayed = obj.optLong(KEY_LAST_PLAYED),
             size = obj.optLong(KEY_SIZE),
             fileName = obj.getString(KEY_FILE_NAME),
-            status = DownloadStatus.entries.find { it.name == obj.optString(KEY_STATUS) } ?: DownloadStatus.FAILED
+            status = DownloadStatus.entries.find { it.name == obj.optString(KEY_STATUS) } ?: DownloadStatus.FAILED,
+            phoneState = PhoneState.entries.find { it.name == obj.optString(KEY_PHONE_STATE) } ?: PhoneState.UNPLAYED
         )
     }
 }

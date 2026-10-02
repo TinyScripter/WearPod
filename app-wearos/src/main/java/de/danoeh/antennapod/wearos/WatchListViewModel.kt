@@ -5,8 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.danoeh.antennapod.wearos.download.DownloadStatus
 import de.danoeh.antennapod.wearos.download.EpisodeDownloadWorker
+import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
+import de.danoeh.antennapod.wearos.sync.PositionSync
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,7 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         viewModelScope.launch(Dispatchers.IO) {
             WatchEpisodeStore.load(getApplication())
+            PositionSync.syncFromPhone(getApplication())
         }
 
         viewModelScope.launch {
@@ -49,5 +52,9 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
             EpisodeDownloadWorker.cancel(getApplication(), itemId)
             WatchEpisodeStore.remove(getApplication(), itemId)
         }
+    }
+
+    fun removePlayed() {
+        _uiState.value.episodes.filter { it.phoneState != PhoneState.UNPLAYED }.forEach { remove(it.itemId) }
     }
 }

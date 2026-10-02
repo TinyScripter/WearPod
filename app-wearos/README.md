@@ -30,3 +30,11 @@ The playlist consists of the downloaded episodes in the order of `WatchEpisodeSt
 The service stores the playback position in `WatchEpisodeStore` and removes an episode from the watch when it has been played completely.
 Skip amounts and playback speed are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
 `WatchPlayerViewModel` connects to the service using a `MediaController`.
+
+## Synchronizing Playback Positions
+
+The most recent timestamp wins, both on the watch and on the phone.
+`PositionReporter` writes the position of an episode into a data item whenever `WatchPlaybackService` stores it.
+Data items are delivered to the phone as soon as it is reachable, so this also works when playing without the phone.
+`PositionSync` requests the playback state of all episodes on the watch from the phone when the list of episodes is opened and before playback starts.
+Episodes that were played or deleted on the phone are marked in the list and are skipped when playing the next episode.

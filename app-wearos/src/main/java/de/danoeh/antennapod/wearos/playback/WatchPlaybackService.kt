@@ -42,6 +42,7 @@ class WatchPlaybackService : MediaSessionService() {
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
     private var startPosition = 0
+    private val lastSavedTimestamps = mutableMapOf<Long, Long>()
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -59,8 +60,21 @@ class WatchPlaybackService : MediaSessionService() {
             if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
                 complete(oldItemId)
             } else if (reason == Player.DISCONTINUITY_REASON_SEEK || reason == Player.DISCONTINUITY_REASON_REMOVE) {
-                val isSameItem = oldPosition.mediaItem?.mediaId == newPosition.mediaItem?.mediaId
-                savePosition(oldItemId, if (isSameItem) newPosition.positionMs else oldPosition.positionMs)
+                if (oldPosition.mediaItem?.mediaId == newPosition.mediaItem?.mediaId) {
+                    savePosition(oldItemId, newPosition.positionMs)
+                } else if (player.playWhenReady) {
+                    savePosition(oldItemId, oldPosition.positionMs)
+                }
+            }
+        }
+
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            val itemId = player.currentMediaItem?.mediaId?.toLongOrNull() ?: return
+            val episode = WatchEpisodeStore.get(this@WatchPlaybackService, itemId) ?: return
+            val lastSaved = lastSavedTimestamps[itemId] ?: return
+            if (playWhenReady && episode.lastPlayed > lastSaved) {
+                startPosition = episode.position
+                player.seekTo(episode.position.toLong())
             }
         }
 
@@ -154,7 +168,9 @@ class WatchPlaybackService : MediaSessionService() {
 
     override fun onDestroy() {
         mainScope.cancel()
-        saveCurrentPosition()
+        if (player.isPlaying) {
+            saveCurrentPosition()
+        }
         mediaSession.release()
         player.release()
         super.onDestroy()
@@ -168,6 +184,7 @@ class WatchPlaybackService : MediaSessionService() {
     private fun savePosition(itemId: Long, position: Long, completed: Boolean = false) {
         val timestamp = System.currentTimeMillis()
         val startPosition = startPosition
+        lastSavedTimestamps[itemId] = timestamp
         ioScope.launch {
             WatchEpisodeStore.update(applicationContext, itemId) {
                 it.copy(position = position.toInt(), lastPlayed = timestamp)

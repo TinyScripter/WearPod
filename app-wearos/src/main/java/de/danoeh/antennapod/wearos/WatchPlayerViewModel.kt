@@ -14,8 +14,10 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import de.danoeh.antennapod.wearos.download.DownloadStatus
+import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
 import de.danoeh.antennapod.wearos.playback.WatchPlaybackService
+import de.danoeh.antennapod.wearos.sync.PositionSync
 import java.util.concurrent.ExecutionException
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
@@ -29,11 +31,13 @@ data class WatchPlayerUiState(
     val position: Int = 0,
     val duration: Int = 0,
     val isPlaying: Boolean = false,
-    val hasNext: Boolean = false
+    val hasNext: Boolean = false,
+    val isLoading: Boolean = false
 )
 
 class WatchPlayerViewModel(application: Application, private val itemId: Long) : AndroidViewModel(application) {
-    private val _uiState = MutableStateFlow(WatchPlayerUiState())
+    private var isStarting = itemId != NO_ITEM
+    private val _uiState = MutableStateFlow(WatchPlayerUiState(isLoading = isStarting))
     val uiState: StateFlow<WatchPlayerUiState> = _uiState
 
     private val controllerFuture = MediaController.Builder(
@@ -59,6 +63,7 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
                 updateState()
             } catch (e: ExecutionException) {
                 Log.e(TAG, "Failed to connect to playback service", e)
+                _uiState.value = WatchPlayerUiState()
             }
         }, ContextCompat.getMainExecutor(application))
 
@@ -71,23 +76,30 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
     }
 
     private fun start(controller: MediaController) {
-        if (itemId == NO_ITEM) {
+        if (!isStarting || (controller.isPlaying && controller.currentMediaItem?.mediaId == itemId.toString())) {
+            isStarting = false
             return
         }
-        if (controller.currentMediaItem?.mediaId == itemId.toString()) {
-            controller.play()
-            return
+        viewModelScope.launch {
+            PositionSync.syncFromPhone(getApplication())
+            if (controller.currentMediaItem?.mediaId == itemId.toString()) {
+                controller.play()
+            } else {
+                val episodes = WatchEpisodeStore.episodes.value.filter {
+                    it.status == DownloadStatus.DOWNLOADED &&
+                        (it.phoneState == PhoneState.UNPLAYED || it.itemId == itemId)
+                }
+                val index = episodes.indexOfFirst { it.itemId == itemId }
+                if (index >= 0) {
+                    val mediaItems = episodes.map { MediaItem.Builder().setMediaId(it.itemId.toString()).build() }
+                    controller.setMediaItems(mediaItems, index, episodes[index].position.toLong())
+                    controller.prepare()
+                    controller.play()
+                }
+            }
+            isStarting = false
+            updateState()
         }
-        WatchEpisodeStore.load(getApplication())
-        val episodes = WatchEpisodeStore.episodes.value.filter { it.status == DownloadStatus.DOWNLOADED }
-        val index = episodes.indexOfFirst { it.itemId == itemId }
-        if (index < 0) {
-            return
-        }
-        val mediaItems = episodes.map { MediaItem.Builder().setMediaId(it.itemId.toString()).build() }
-        controller.setMediaItems(mediaItems, index, episodes[index].position.toLong())
-        controller.prepare()
-        controller.play()
     }
 
     private fun updateState() {
@@ -98,7 +110,8 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
             position = controller.currentPosition.toInt(),
             duration = controller.duration.coerceAtLeast(0).toInt(),
             isPlaying = controller.isPlaying,
-            hasNext = controller.hasNextMediaItem()
+            hasNext = controller.hasNextMediaItem(),
+            isLoading = isStarting
         )
     }
 
