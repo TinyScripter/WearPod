@@ -1,11 +1,9 @@
 package de.danoeh.antennapod.wearos.playback
 
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.annotation.OptIn
-import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -15,14 +13,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.CommandButton
 import androidx.media3.session.DefaultMediaNotificationProvider
-import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.WearUnsuitableOutputPlaybackSuppressionResolverListener
-import androidx.wear.ongoing.OngoingActivity
-import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import de.danoeh.antennapod.net.sync.wearinterface.WearPosition
@@ -187,7 +181,7 @@ class WatchPlaybackService : MediaSessionService() {
             .setSessionActivity(sessionActivity)
             .build()
 
-        val notificationProvider = OngoingMediaNotificationProvider(this, sessionActivity)
+        val notificationProvider = DefaultMediaNotificationProvider.Builder(this).build()
         notificationProvider.setSmallIcon(NotificationsR.drawable.ic_notification)
         setMediaNotificationProvider(notificationProvider)
 
@@ -265,28 +259,5 @@ class WatchPlaybackService : MediaSessionService() {
     companion object {
         private const val TAG = "WatchPlaybackService"
         private val SAVE_INTERVAL = 60.seconds
-    }
-}
-
-/**
- * Attaches an ongoing activity to the media notification,
- * so that the watch face and the app launcher show that playback is running.
- */
-@OptIn(UnstableApi::class)
-private class OngoingMediaNotificationProvider(private val context: Context, private val touchIntent: PendingIntent) :
-    DefaultMediaNotificationProvider(context) {
-    override fun addNotificationActions(
-        mediaSession: MediaSession,
-        mediaButtons: ImmutableList<CommandButton>,
-        builder: NotificationCompat.Builder,
-        actionFactory: MediaNotification.ActionFactory
-    ): IntArray {
-        val compactViewIndices = super.addNotificationActions(mediaSession, mediaButtons, builder, actionFactory)
-        OngoingActivity.Builder(context, DEFAULT_NOTIFICATION_ID, builder)
-            .setStaticIcon(NotificationsR.drawable.ic_notification)
-            .setTouchIntent(touchIntent)
-            .build()
-            .apply(context)
-        return compactViewIndices
     }
 }

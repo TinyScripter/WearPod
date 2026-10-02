@@ -31,7 +31,6 @@ The service observes `WatchEpisodeStore` and updates the playlist around the cur
 The service stores the playback position in `WatchEpisodeStore` and removes an episode from the watch when it has been played completely.
 Skip amounts and playback speed are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
 `WatchPlayerViewModel` connects to the service using a `MediaController`.
-While playing, the media notification carries an ongoing activity, so the watch face shows an indicator that opens the player.
 
 ## Synchronizing Playback Positions
 
