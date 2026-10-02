@@ -17,7 +17,9 @@ class WearDataListenerService : WearableListenerService() {
             }
             WearDataPaths.NOW_PLAYING ->
                 WearDataRepository.updateNowPlaying(WearSerializer.nowPlayingFromBytes(event.data))
-            WearDataPaths.QUEUE, WearDataPaths.DOWNLOADS, WearDataPaths.EPISODES -> {
+            WearDataPaths.SETTINGS ->
+                WearDataRepository.updateSettings(WearSerializer.settingsFromBytes(event.data))
+            WearDataPaths.QUEUE, WearDataPaths.DOWNLOADS, WearDataPaths.EPISODES, WearDataPaths.POSITIONS -> {
                 val items = WearSerializer.episodesFromBytes(event.data)
                 Log.d(TAG, "Received $path: ${items.size} episodes")
                 WearDataRepository.updateEpisodes(path, items)
@@ -26,6 +28,8 @@ class WearDataListenerService : WearableListenerService() {
                 val items = WearSerializer.episodesFromBytes(event.data)
                 Log.d(TAG, "Received $path: ${items.size} episodes")
                 WearDataRepository.updateEpisodes(path, items)
+            } else if (path.startsWith(WearDataPaths.EPISODE_DETAILS_PREFIX)) {
+                WearSerializer.episodeDetailsFromBytes(event.data)?.let { WearDataRepository.updateEpisodeDetails(it) }
             }
         }
     }

@@ -7,6 +7,7 @@ import com.google.android.gms.wearable.Wearable;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.playback.service.PlaybackService;
 import de.danoeh.antennapod.storage.preferences.PlaybackPreferences;
+import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -20,12 +21,14 @@ import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths;
 import de.danoeh.antennapod.net.sync.wearinterface.WearSerializer;
+import de.danoeh.antennapod.net.sync.wearinterface.WearSettings;
 import de.danoeh.antennapod.playback.service.PlaybackServiceStarter;
 import de.danoeh.antennapod.storage.database.DBReader;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WearListenerService extends WearableListenerService {
@@ -64,15 +67,16 @@ public class WearListenerService extends WearableListenerService {
     public void onMessageReceived(MessageEvent event) {
         String path = event.getPath();
         String sourceNodeId = event.getSourceNodeId();
+        byte[] data = event.getData();
         Log.d(TAG, "Message received: " + path + " from " + sourceNodeId);
-        Completable.fromAction(() -> handleMessage(path, sourceNodeId))
+        Completable.fromAction(() -> handleMessage(path, sourceNodeId, data))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                         () -> { },
                         throwable -> Log.e(TAG, "Failed to handle wearable message: " + path, throwable));
     }
 
-    private void handleMessage(String path, String sourceNodeId) {
+    private void handleMessage(String path, String sourceNodeId, byte[] data) {
         switch (path) {
             case WearDataPaths.NOW_PLAYING:
                 FeedMedia media = DBReader.getFeedMedia(PlaybackPreferences.getCurrentlyPlayingFeedMediaId());
@@ -116,6 +120,21 @@ public class WearListenerService extends WearableListenerService {
             case WearDataPaths.SUBSCRIPTIONS:
                 reply(sourceNodeId, path, WearSerializer.feedsToBytes(DBReader.getFeedList()));
                 break;
+            case WearDataPaths.SETTINGS:
+                reply(sourceNodeId, path, WearSerializer.settingsToBytes(new WearSettings(
+                        UserPreferences.getRewindSecs(), UserPreferences.getFastForwardSecs(),
+                        UserPreferences.getSmartMarkAsPlayedSecs(), UserPreferences.getPlaybackSpeed())));
+                break;
+            case WearDataPaths.POSITIONS:
+                List<FeedItem> positionItems = new ArrayList<>();
+                for (long itemId : WearSerializer.idsFromBytes(data)) {
+                    FeedItem positionItem = DBReader.getFeedItem(itemId);
+                    if (positionItem != null) {
+                        positionItems.add(positionItem);
+                    }
+                }
+                reply(sourceNodeId, path, WearSerializer.playbackStatesToBytes(positionItems));
+                break;
             default:
                 if (path.startsWith(WearDataPaths.PLAY_PREFIX)) {
                     try {
@@ -132,6 +151,18 @@ public class WearListenerService extends WearableListenerService {
                         reply(sourceNodeId, path, WearSerializer.episodesToBytes(feedItems));
                     } catch (NumberFormatException e) {
                         Log.w(TAG, "Ignoring malformed feed episodes path: " + path, e);
+                    }
+                } else if (path.startsWith(WearDataPaths.EPISODE_DETAILS_PREFIX)) {
+                    try {
+                        long itemId = Long.parseLong(path.substring(WearDataPaths.EPISODE_DETAILS_PREFIX.length()));
+                        FeedItem item = DBReader.getFeedItem(itemId);
+                        if (item == null) {
+                            Log.w(TAG, "Item not found for id " + itemId);
+                            return;
+                        }
+                        reply(sourceNodeId, path, WearSerializer.episodeDetailsToBytes(item));
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Ignoring malformed episode details path: " + path, e);
                     }
                 } else if (path.startsWith(WearDataPaths.OPEN_ON_PHONE_PREFIX)) {
                     try {

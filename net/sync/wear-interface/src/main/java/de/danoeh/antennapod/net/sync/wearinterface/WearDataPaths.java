@@ -12,6 +12,9 @@ public final class WearDataPaths {
     public static final String SKIP_FORWARD = "/skip_forward";
     public static final String SKIP_BACKWARD = "/skip_backward";
     public static final String OPEN_ON_PHONE_PREFIX = "/open_on_phone/";
+    public static final String EPISODE_DETAILS_PREFIX = "/episode_details/";
+    public static final String POSITIONS = "/positions";
+    public static final String SETTINGS = "/settings";
 
     public static String playPath(long itemId) {
         return PLAY_PREFIX + itemId;
@@ -23,6 +26,10 @@ public final class WearDataPaths {
 
     public static String feedEpisodesPath(long feedId) {
         return FEED_EPISODES_PREFIX + feedId;
+    }
+
+    public static String episodeDetailsPath(long itemId) {
+        return EPISODE_DETAILS_PREFIX + itemId;
     }
 
     private WearDataPaths() {
