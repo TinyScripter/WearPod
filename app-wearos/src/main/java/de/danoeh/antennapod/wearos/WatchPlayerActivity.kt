@@ -1,6 +1,9 @@
 package de.danoeh.antennapod.wearos
 
+import android.media.AudioManager
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,19 +25,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.view.InputDeviceCompat
+import androidx.core.view.MotionEventCompat
+import androidx.core.view.ViewConfigurationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.LevelIndicator
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.ui.common.Converter
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
+import kotlin.math.abs
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 
 class WatchPlayerActivity : ComponentActivity() {
+    private var rotaryScrollPixels = 0f
+    private val volume = mutableStateOf<Float?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val itemId = if (savedInstanceState == null) {
@@ -45,8 +60,14 @@ class WatchPlayerActivity : ComponentActivity() {
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
                 val uiState by viewModel.uiState.collectAsState()
+                val currentVolume by volume
+                LaunchedEffect(currentVolume) {
+                    delay(VOLUME_INDICATOR_DURATION)
+                    volume.value = null
+                }
                 WatchPlayerScreen(
                     uiState = uiState,
+                    volume = currentVolume,
                     onPlayPause = { viewModel.playPause() },
                     onSkipForward = { viewModel.skipForward() },
                     onSkipBackward = { viewModel.skipBackward() },
@@ -56,14 +77,36 @@ class WatchPlayerActivity : ComponentActivity() {
         }
     }
 
+    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        if (event.action != MotionEvent.ACTION_SCROLL ||
+            !event.isFromSource(InputDeviceCompat.SOURCE_ROTARY_ENCODER)
+        ) {
+            return super.onGenericMotionEvent(event)
+        }
+        rotaryScrollPixels -= event.getAxisValue(MotionEventCompat.AXIS_SCROLL) *
+            ViewConfigurationCompat.getScaledVerticalScrollFactor(ViewConfiguration.get(this), this)
+        val audioManager = getSystemService(AudioManager::class.java)
+        while (abs(rotaryScrollPixels) >= VOLUME_STEP_PIXELS) {
+            val direction = if (rotaryScrollPixels > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
+            rotaryScrollPixels -= if (rotaryScrollPixels > 0) VOLUME_STEP_PIXELS else -VOLUME_STEP_PIXELS
+            volume.value = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat() /
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        }
+        return true
+    }
+
     companion object {
         const val EXTRA_ITEM_ID = "item_id"
+        private const val VOLUME_STEP_PIXELS = 48f
+        private val VOLUME_INDICATOR_DURATION = 2.seconds
     }
 }
 
 @Composable
 fun WatchPlayerScreen(
     uiState: WatchPlayerUiState,
+    volume: Float?,
     onPlayPause: () -> Unit,
     onSkipForward: () -> Unit,
     onSkipBackward: () -> Unit,
@@ -78,7 +121,9 @@ fun WatchPlayerScreen(
             Text(text = stringResource(CommonR.string.no_media_playing_label), textAlign = TextAlign.Center)
             return@Box
         }
-        if (uiState.duration > 0) {
+        if (volume != null) {
+            LevelIndicator(value = { volume }, modifier = Modifier.align(Alignment.CenterStart))
+        } else if (uiState.duration > 0) {
             CircularProgressIndicator(
                 progress = { uiState.position.toFloat() / uiState.duration.toFloat() },
                 modifier = Modifier.fillMaxSize().padding(2.dp),
