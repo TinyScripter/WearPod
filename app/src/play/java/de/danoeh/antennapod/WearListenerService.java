@@ -1,6 +1,9 @@
 package de.danoeh.antennapod;
 
+import android.net.Uri;
 import android.util.Log;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
@@ -20,6 +23,7 @@ import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths;
+import de.danoeh.antennapod.net.sync.wearinterface.WearPosition;
 import de.danoeh.antennapod.net.sync.wearinterface.WearSerializer;
 import de.danoeh.antennapod.net.sync.wearinterface.WearSettings;
 import de.danoeh.antennapod.playback.service.PlaybackServiceStarter;
@@ -74,6 +78,29 @@ public class WearListenerService extends WearableListenerService {
                 .subscribe(
                         () -> { },
                         throwable -> Log.e(TAG, "Failed to handle wearable message: " + path, throwable));
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent event : dataEvents) {
+            Uri uri = event.getDataItem().getUri();
+            if (event.getType() != DataEvent.TYPE_CHANGED || uri.getPath() == null
+                    || !uri.getPath().startsWith(WearDataPaths.WATCH_POSITION_PREFIX)) {
+                continue;
+            }
+            WearPosition position = WearSerializer.positionFromBytes(event.getDataItem().getData());
+            Log.d(TAG, "Position received: " + uri.getPath());
+            Completable.fromAction(() -> {
+                if (position != null) {
+                    WearPositionApplier.apply(this, position);
+                }
+                Wearable.getDataClient(this).deleteDataItems(uri);
+            })
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe(
+                            () -> { },
+                            throwable -> Log.e(TAG, "Failed to apply position: " + uri.getPath(), throwable));
+        }
     }
 
     private void handleMessage(String path, String sourceNodeId, byte[] data) {

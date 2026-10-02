@@ -223,4 +223,40 @@ public class WearSerializerTest {
     public void testSettingsFromBytesEmpty() {
         assertNull(WearSerializer.settingsFromBytes(new byte[0]));
     }
+
+    @Test
+    public void testPositionRoundTrip() {
+        WearPosition position = new WearPosition(12L, "guid-12", "https://example.com/episode.mp3",
+                600000, 3600000, 300000, 1790000000000L, true);
+
+        WearPosition result = WearSerializer.positionFromBytes(WearSerializer.positionToBytes(position));
+
+        assertTrue(result != null);
+        assertEquals(12L, result.itemId);
+        assertEquals("guid-12", result.guid);
+        assertEquals("https://example.com/episode.mp3", result.episodeUrl);
+        assertEquals(600000, result.position);
+        assertEquals(3600000, result.duration);
+        assertEquals(300000, result.startPosition);
+        assertEquals(1790000000000L, result.timestamp);
+        assertTrue(result.completed);
+    }
+
+    @Test
+    public void testPositionWithoutGuid() {
+        WearPosition position = new WearPosition(13L, null, "https://example.com/episode.mp3",
+                1000, 2000, 0, 5L, false);
+
+        WearPosition result = WearSerializer.positionFromBytes(WearSerializer.positionToBytes(position));
+
+        assertTrue(result != null);
+        assertNull(result.guid);
+        assertFalse(result.completed);
+    }
+
+    @Test
+    public void testPositionFromBytesEmpty() {
+        assertNull(WearSerializer.positionFromBytes(null));
+        assertNull(WearSerializer.positionFromBytes(new byte[0]));
+    }
 }

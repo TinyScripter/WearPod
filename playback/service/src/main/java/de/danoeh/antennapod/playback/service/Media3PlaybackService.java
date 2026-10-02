@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.playback.service;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
@@ -672,6 +673,12 @@ public class Media3PlaybackService extends MediaLibraryService {
 
     private void updateDatabaseAfterPlayback(FeedMedia media, int startPosition,
                                              boolean ended, boolean skipped, boolean playingNext) {
+        updateDatabaseAfterPlayback(this, media, startPosition, playedMediaId, ended, skipped, playingNext);
+    }
+
+    public static void updateDatabaseAfterPlayback(Context context, FeedMedia media, int startPosition,
+                                                   String lastPlayedMediaId, boolean ended, boolean skipped,
+                                                   boolean playingNext) {
         if (media == null) {
             return;
         }
@@ -687,7 +694,7 @@ public class Media3PlaybackService extends MediaLibraryService {
                 DBWriter.markItemsPlayed(FeedItem.PLAYED, true, Collections.singletonList(item));
             }
             if (ended || almostEnded || (skipped && !UserPreferences.shouldSkipKeepEpisode())) {
-                DBWriter.removeQueueItem(this, ended, item);
+                DBWriter.removeQueueItem(context, ended, item);
                 FeedPreferences.AutoDeleteAction action = item.getFeed().getPreferences().getCurrentAutoDelete();
                 boolean autoDeleteEnabledGlobally = UserPreferences.isAutoDelete()
                         && (!item.getFeed().isLocalFeed() || UserPreferences.isAutoDeleteLocal());
@@ -695,11 +702,11 @@ public class Media3PlaybackService extends MediaLibraryService {
                         || (action == FeedPreferences.AutoDeleteAction.GLOBAL && autoDeleteEnabledGlobally);
                 if (shouldAutoDelete && (!item.isTagged(FeedItem.TAG_FAVORITE)
                         || !UserPreferences.shouldFavoriteKeepEpisode())) {
-                    DBWriter.deleteFeedMediaOfItem(this, media);
+                    DBWriter.deleteFeedMediaOfItem(context, media);
                 }
             }
         }
-        if (ended || ((skipped || playingNext) && String.valueOf(media.getId()).equals(playedMediaId))) {
+        if (ended || ((skipped || playingNext) && String.valueOf(media.getId()).equals(lastPlayedMediaId))) {
             DBWriter.addItemToPlaybackHistory(media);
         }
     }

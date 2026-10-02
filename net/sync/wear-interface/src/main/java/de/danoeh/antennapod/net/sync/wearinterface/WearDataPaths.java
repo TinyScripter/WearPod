@@ -15,6 +15,7 @@ public final class WearDataPaths {
     public static final String EPISODE_DETAILS_PREFIX = "/episode_details/";
     public static final String POSITIONS = "/positions";
     public static final String SETTINGS = "/settings";
+    public static final String WATCH_POSITION_PREFIX = "/watch_position/";
 
     public static String playPath(long itemId) {
         return PLAY_PREFIX + itemId;
@@ -30,6 +31,10 @@ public final class WearDataPaths {
 
     public static String episodeDetailsPath(long itemId) {
         return EPISODE_DETAILS_PREFIX + itemId;
+    }
+
+    public static String watchPositionPath(long itemId) {
+        return WATCH_POSITION_PREFIX + itemId;
     }
 
     private WearDataPaths() {

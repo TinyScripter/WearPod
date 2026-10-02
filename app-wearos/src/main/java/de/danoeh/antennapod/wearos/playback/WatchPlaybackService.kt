@@ -19,9 +19,11 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.WearUnsuitableOutputPlaybackSuppressionResolverListener
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import de.danoeh.antennapod.net.sync.wearinterface.WearPosition
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.WatchPlayerActivity
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
+import de.danoeh.antennapod.wearos.sync.PositionReporter
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +38,10 @@ import kotlinx.coroutines.launch
 @OptIn(UnstableApi::class)
 class WatchPlaybackService : MediaSessionService() {
     private val mainScope = CoroutineScope(Dispatchers.Main)
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private val ioScope = CoroutineScope(Dispatchers.IO.limitedParallelism(1))
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
+    private var startPosition = 0
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -62,12 +65,10 @@ class WatchPlaybackService : MediaSessionService() {
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) {
-                return
-            }
             val itemId = mediaItem?.mediaId?.toLongOrNull() ?: return
             val position = WatchEpisodeStore.get(this@WatchPlaybackService, itemId)?.position ?: 0
-            if (position > 0) {
+            startPosition = position
+            if (position > 0 && reason != Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) {
                 player.seekTo(position.toLong())
             }
         }
@@ -164,24 +165,41 @@ class WatchPlaybackService : MediaSessionService() {
         savePosition(itemId, player.currentPosition)
     }
 
-    private fun savePosition(itemId: Long, position: Long) {
+    private fun savePosition(itemId: Long, position: Long, completed: Boolean = false) {
         val timestamp = System.currentTimeMillis()
+        val startPosition = startPosition
         ioScope.launch {
             WatchEpisodeStore.update(applicationContext, itemId) {
                 it.copy(position = position.toInt(), lastPlayed = timestamp)
+            }
+            val episode = WatchEpisodeStore.get(applicationContext, itemId) ?: return@launch
+            PositionReporter.report(
+                applicationContext,
+                WearPosition(
+                    itemId,
+                    episode.guid,
+                    episode.downloadUrl,
+                    position.toInt(),
+                    episode.duration,
+                    startPosition,
+                    timestamp,
+                    completed
+                )
+            )
+            if (completed) {
+                WatchEpisodeStore.remove(applicationContext, itemId)
             }
         }
     }
 
     private fun complete(itemId: Long) {
+        val duration = WatchEpisodeStore.get(this, itemId)?.duration ?: 0
+        savePosition(itemId, duration.toLong(), true)
         val index = (0 until player.mediaItemCount).firstOrNull {
             player.getMediaItemAt(it).mediaId == itemId.toString()
         }
         if (index != null) {
             player.removeMediaItem(index)
-        }
-        ioScope.launch {
-            WatchEpisodeStore.remove(applicationContext, itemId)
         }
     }
 

@@ -33,6 +33,9 @@ public final class WearSerializer {
     private static final String KEY_FAST_FORWARD_SECS = "fast_forward_secs";
     private static final String KEY_SMART_MARK_AS_PLAYED_SECS = "smart_mark_as_played_secs";
     private static final String KEY_PLAYBACK_SPEED = "playback_speed";
+    private static final String KEY_START_POSITION = "start_position";
+    private static final String KEY_TIMESTAMP = "timestamp";
+    private static final String KEY_COMPLETED = "completed";
 
     private WearSerializer() {
     }
@@ -214,6 +217,45 @@ public final class WearSerializer {
                     obj.optInt(KEY_FAST_FORWARD_SECS, WearSettings.DEFAULT_FAST_FORWARD_SECS),
                     obj.optInt(KEY_SMART_MARK_AS_PLAYED_SECS, WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS),
                     (float) obj.optDouble(KEY_PLAYBACK_SPEED, WearSettings.DEFAULT_PLAYBACK_SPEED));
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    @NonNull
+    public static byte[] positionToBytes(@NonNull WearPosition position) {
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put(KEY_EPISODE_ID, position.itemId);
+            obj.put(KEY_GUID, position.guid);
+            obj.put(KEY_DOWNLOAD_URL, position.episodeUrl);
+            obj.put(KEY_POSITION, position.position);
+            obj.put(KEY_DURATION, position.duration);
+            obj.put(KEY_START_POSITION, position.startPosition);
+            obj.put(KEY_TIMESTAMP, position.timestamp);
+            obj.put(KEY_COMPLETED, position.completed);
+            return obj.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e) {
+            return new byte[0];
+        }
+    }
+
+    @Nullable
+    public static WearPosition positionFromBytes(@Nullable byte[] data) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        try {
+            JSONObject obj = new JSONObject(new String(data, StandardCharsets.UTF_8));
+            return new WearPosition(
+                    obj.optLong(KEY_EPISODE_ID, -1),
+                    obj.optString(KEY_GUID, null),
+                    obj.optString(KEY_DOWNLOAD_URL, null),
+                    obj.optInt(KEY_POSITION, 0),
+                    obj.optInt(KEY_DURATION, 0),
+                    obj.optInt(KEY_START_POSITION, 0),
+                    obj.optLong(KEY_TIMESTAMP, 0),
+                    obj.optBoolean(KEY_COMPLETED, false));
         } catch (JSONException e) {
             return null;
         }
