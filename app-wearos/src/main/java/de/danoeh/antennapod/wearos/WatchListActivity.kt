@@ -1,0 +1,107 @@
+package de.danoeh.antennapod.wearos
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.ViewModelProvider
+import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.dynamicColorScheme
+import de.danoeh.antennapod.ui.common.R as CommonR
+import de.danoeh.antennapod.wearos.composable.ListItem
+import de.danoeh.antennapod.wearos.composable.ListScaffold
+import de.danoeh.antennapod.wearos.download.DownloadStatus
+import de.danoeh.antennapod.wearos.download.WatchEpisode
+
+class WatchListActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val viewModel = ViewModelProvider(this)[WatchListViewModel::class.java]
+
+        setContent {
+            MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
+                val uiState by viewModel.uiState.collectAsState()
+                WatchListScreen(
+                    uiState = uiState,
+                    onRetry = { viewModel.retry(it) },
+                    onRemove = { viewModel.remove(it) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun downloadStatusText(episode: WatchEpisode, progress: Int): String? = when (episode.status) {
+    DownloadStatus.QUEUED -> stringResource(CommonR.string.download_pending)
+    DownloadStatus.DOWNLOADING -> stringResource(CommonR.string.wearos_downloading, progress)
+    DownloadStatus.FAILED -> stringResource(CommonR.string.wearos_download_failed)
+    DownloadStatus.DOWNLOADED -> null
+}
+
+@Composable
+fun WatchListScreen(uiState: WatchListUiState, onRetry: (Long) -> Unit, onRemove: (Long) -> Unit) {
+    val scrollState = rememberScalingLazyListState()
+    var menuEpisode by remember { mutableStateOf<WatchEpisode?>(null) }
+    var menuVisible by remember { mutableStateOf(false) }
+
+    ListScaffold(
+        titleRes = CommonR.string.wearos_on_watch,
+        scrollState = scrollState,
+        isPhoneSupported = true,
+        isTimedOut = false,
+        isLoading = false,
+        isEmpty = uiState.episodes.isEmpty()
+    ) {
+        items(uiState.episodes) { episode ->
+            ListItem(
+                text = episode.title,
+                secondaryText = downloadStatusText(episode, uiState.progress[episode.itemId] ?: 0)
+                    ?: episode.feedTitle.ifEmpty { null },
+                onClick = {
+                    menuEpisode = episode
+                    menuVisible = true
+                }
+            )
+        }
+    }
+
+    AlertDialog(
+        visible = menuVisible,
+        onDismissRequest = { menuVisible = false },
+        title = { Text(text = menuEpisode?.title ?: "", maxLines = 3, overflow = TextOverflow.Ellipsis) }
+    ) {
+        val episode = menuEpisode ?: return@AlertDialog
+        if (episode.status == DownloadStatus.FAILED) {
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.retry_label),
+                    onClick = {
+                        onRetry(episode.itemId)
+                        menuVisible = false
+                    }
+                )
+            }
+        }
+        item {
+            ListItem(
+                text = stringResource(CommonR.string.wearos_remove_from_watch),
+                onClick = {
+                    onRemove(episode.itemId)
+                    menuVisible = false
+                }
+            )
+        }
+    }
+}

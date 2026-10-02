@@ -75,6 +75,8 @@ dependencies {
     implementation libs.kotlinx.coroutines.play.services
     implementation libs.androidx.activity.compose
     implementation libs.androidx.appcompat
+    implementation libs.androidx.work.runtime
+    implementation libs.okhttp
 
     testImplementation libs.junit
 }
