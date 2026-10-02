@@ -1066,6 +1066,7 @@
     <string name="wearos_browse_phone" tools:ignore="UnusedResources">Browse phone</string>
     <string name="wearos_open_on_phone" tools:ignore="UnusedResources">Open on phone</string>
     <string name="wearos_on_watch" tools:ignore="UnusedResources">On watch</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Remote play</string>
     <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Download to watch</string>
     <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Remove from watch</string>
     <string name="wearos_downloading" tools:ignore="UnusedResources">Downloading (%1$d%%)</string>

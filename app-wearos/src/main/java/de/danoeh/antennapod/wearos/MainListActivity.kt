@@ -98,6 +98,24 @@ fun MainListScreen(
             }
 
             item {
+                ListItem(
+                    text = stringResource(CommonR.string.wearos_on_watch),
+                    iconRes = CommonR.drawable.ic_watch_black,
+                    onClick = onOpenWatchList
+                )
+            }
+
+            item {
+                Text(
+                    text = stringResource(CommonR.string.wearos_remote_play),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+
+            item {
                 if (uiState.nowPlaying != null) {
                     ListItem(
                         text = uiState.nowPlaying.item.title ?: "",
@@ -109,14 +127,6 @@ fun MainListScreen(
                         onClick = {}
                     )
                 }
-            }
-
-            item {
-                ListItem(
-                    text = stringResource(CommonR.string.wearos_on_watch),
-                    iconRes = CommonR.drawable.ic_watch_black,
-                    onClick = onOpenWatchList
-                )
             }
 
             item {
