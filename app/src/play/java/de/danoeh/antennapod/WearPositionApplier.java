@@ -51,7 +51,7 @@ public final class WearPositionApplier {
 
         int listened = position.position - Math.max(position.startPosition, media.getPosition());
         if (listened > 0) {
-            media.setPlayedDuration(media.getPlayedDuration() + listened);
+            media.incrementPlayedDuration(listened);
         }
         PlayableUtils.saveCurrentPosition(media, position.position, position.timestamp);
 
