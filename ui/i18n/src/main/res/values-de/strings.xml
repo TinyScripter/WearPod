@@ -963,5 +963,16 @@
     <string name="wearos_play_on_phone" tools:ignore="UnusedResources">Auf dem Smartphone abspielen</string>
     <string name="wearos_browse_phone" tools:ignore="UnusedResources">Smartphone durchsuchen</string>
     <string name="wearos_open_on_phone" tools:ignore="UnusedResources">Auf dem Smartphone öffnen</string>
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Auf der Uhr</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Fernwiedergabe</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Auf die Uhr herunterladen</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Von der Uhr entfernen</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Wird heruntergeladen (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Download fehlgeschlagen</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Warte auf WLAN</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Die Mediendatei konnte nicht abgespielt werden</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Auf dem Smartphone gelöscht</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Nach oben</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Nach unten</string>
     <string name="queue_time_left_label">%1$s • %2$s verbleibend</string>
 </resources>
