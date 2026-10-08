@@ -21,10 +21,28 @@ Everything else is the regular AntennaPod, the easy-to-use, flexible and open-so
       height="70">](https://f-droid.org/app/de.danoeh.antennapod)
 
 This fork is maintained by one person in their spare time:
-
-- It is not distributed through Google Play or F-Droid and does not update automatically.
 - It follows the official releases only with a delay and may contain bugs that the official app does not have.
 - It has its own package name and signing key. Your data is not shared with an installed official AntennaPod. To move your subscriptions and progress, use the import and export functions in the settings.
+
+### 🧪 Installation & Testing (Wear OS & Android Auto)
+
+You can install this build either via the Google Play Internal Test Track or manually via GitHub Releases:
+
+#### Option 1: Google Play Beta (Recommended)
+* **Features:** Automatic updates, one-click installation on Wear OS, and full **Android Auto** support.
+* **Requirements:** Submit your Google Play account email address so you can be added to the internal test track:
+  
+  👉 **[Request Access via Form](https://forms.gle/yyEuUSFzQbTkvgVt5)**
+
+---
+
+#### Option 2: Manual Download (GitHub Releases)
+If you prefer not to share your email address, you can download the APKs directly from the [Releases](https://github.com/DEIN_USER/DEIN_REPO/releases) page.
+
+⚠️ **Limitations of manual installation (Sideloading):**
+* **No Android Auto:** Sideloaded apps are blocked by Android Auto and will not appear on your car display without advanced developer settings.
+* **Manual Wear OS Setup:** Installing the APK on your smartwatch requires manual sideloading via ADB (e.g. using wireless debugging and tools like GeminiMan Wear OS Manager or Bugjaeger).
+* **No Auto-Updates:** You will need to manually download and install future releases.
 
 ## Features of the Wear OS app
 
