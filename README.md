@@ -37,7 +37,7 @@ You can install this build either via the Google Play Internal Test Track or man
 ---
 
 #### Option 2: Manual Download (GitHub Releases)
-If you prefer not to share your email address, you can download the APKs directly from the [Releases](https://github.com/DEIN_USER/DEIN_REPO/releases) page.
+If you prefer not to share your email address, you can download the APKs directly from the [Releases](https://github.com/swalczyk/AntennaPod/releases) page.
 
 ⚠️ **Limitations of manual installation (Sideloading):**
 * **No Android Auto:** Sideloaded apps are blocked by Android Auto and will not appear on your car display without advanced developer settings.
