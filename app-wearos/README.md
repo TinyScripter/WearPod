@@ -22,6 +22,13 @@ Use this to trigger actions (playback control) or to request data (the phone the
 The list is persisted as a JSON file in the app's files directory, so it is available without the phone.
 `EpisodeDownloadWorker` downloads the media file of one episode directly from its original URL to `files/episodes`.
 It requests a Wi-Fi network first and refuses to download over metered networks (except in debug builds, as the emulator only has a metered network).
+Without Wi-Fi, the episode is marked as waiting for Wi-Fi and the worker retries with a linear backoff, without ever giving up.
+The worker runs as a foreground service with a notification, so long downloads are not stopped after 10 minutes.
+This only works if the system allows starting a foreground service at that moment (usually when the download was started from the app), otherwise it downloads without a notification.
+Interrupted downloads continue where they stopped using HTTP range requests.
+Only real download errors count as failed attempts (`WatchEpisode.failedDownloads`), the download fails after the third retry.
+Episodes are limited to 1 GB in total, and at least 100 MB of the storage of the watch stay free.
+The free space is checked before the download using the size from the phone and again using the `Content-Length` of the server.
 
 ## Playback on the Watch
 
@@ -29,8 +36,10 @@ It requests a Wi-Fi network first and refuses to download over metered networks 
 The playlist consists of the downloaded episodes in the order of `WatchEpisodeStore`, the media id of each item is the episode id.
 The service observes `WatchEpisodeStore` and updates the playlist around the current episode when episodes are moved, added or removed.
 The service stores the playback position in `WatchEpisodeStore` and removes an episode from the watch when it has been played completely.
-Skip amounts and playback speed are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
-`WatchPlayerViewModel` connects to the service using a `MediaController`.
+Skipping to the next episode within the "smart mark as played" time before the end also counts as played completely.
+Skip amounts, playback speed and the smart mark as played time are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
+New settings from the phone are applied to the running service immediately. The media session uses a `ForwardingPlayer` for this, because the skip amounts of ExoPlayer cannot be changed after it was built.
+`WatchPlayerViewModel` connects to the service using a `MediaController` and only polls the playback position while the player screen is visible.
 
 ## Synchronizing Playback Positions
 

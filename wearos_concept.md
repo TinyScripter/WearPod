@@ -88,10 +88,11 @@ As before, JSON via `org.json` in `WearSerializer`. New fields are read with `op
 
 ### 5.2 Download
 
-- `WorkManager` (`androidx.work:work-runtime` is already used in AntennaPod), so that downloads also run in the background and survive restarts.
+- `WorkManager` (`androidx.work:work-runtime` is already used in AntennaPod), so that downloads also run in the background and survive restarts. The worker runs in the foreground with a notification, so long downloads are not stopped after 10 minutes.
 - **Explicitly request Wi-Fi** using `ConnectivityManager.requestNetwork` with `TRANSPORT_WIFI`. Otherwise Wear OS turns Wi-Fi off to save power, and the download is very slow over Bluetooth.
-- Download using OkHttp (already used in AntennaPod), with progress display and cancellation.
-- **Storage limit** (e.g. at most X GB or N episodes) with a warning.
+- Download using OkHttp (already used in AntennaPod), with progress display and cancellation. Interrupted downloads continue using HTTP range requests.
+- Without Wi-Fi, the download waits and retries regularly. Only real download errors count as failed attempts.
+- **Storage limit:** at most 1 GB for all episodes, and at least 100 MB of the storage of the watch stay free. Checked before the download and again with the real file size from the server.
 - Not in V1: podcasts with username and password (`FeedPreferences.getUsername/getPassword`). These episodes are grayed out.
 - **Possible later alternative:** the phone sends the already downloaded file using `ChannelClient.sendFile`. This works without Wi-Fi on the watch and also for podcasts with a password, but is considerably slower.
 
@@ -99,9 +100,10 @@ As before, JSON via `org.json` in `WearSerializer`. New fields are read with `op
 
 - Media3 ExoPlayer in a separate `MediaSessionService` on the watch (Media3 is already used in AntennaPod).
 - **Headphones:** many watches do not play media through the speaker. With `ExoPlayer.Builder.setSuppressPlaybackOnUnsuitableOutput(true)`, playback waits for Bluetooth headphones, and Media3 can then open the selection of Bluetooth devices.
-- **Running playback on the watch face:** ongoing activity (`androidx.wear:wear-ongoing`). This dependency would be new.
+- **Running playback on the watch face:** ongoing activity (`androidx.wear:wear-ongoing`). This dependency would be new. Not implemented.
 - **Buttons:** back (skip amount from the phone), play/pause, forward, next episode of the list. Volume using the rotating crown, if the watch has one.
-- At the end of an episode: report the position as `completed`, delete the file, start the next episode.
+- At the end of an episode: report the position as `completed`, delete the file, start the next episode. Skipping to the next episode within the "smart mark as played" time of the phone counts as the end of the episode.
+- Settings from the phone (skip amounts, playback speed, smart mark as played) are stored on the watch and applied immediately, also during playback.
 
 ### 5.4 Reporting Positions
 
@@ -118,7 +120,7 @@ The position is **always stored locally first** and then transferred to the phon
 - Detail screen of an episode (from the phone): new button **"Download to watch"**.
 - "On watch" list: tapping starts playback. A **long press** opens a menu with "Move up", "Move down", "Move to top" and "Remove". Drag & drop does not exist in Compose for Wear OS, and it would also be impractical on the round display.
 - Player screen with the four buttons, progress as a ring at the edge.
-- All new strings go into `ui/i18n/src/main/res/values/strings.xml`, as required by `AGENTS.md`.
+- All new strings go into `ui/i18n/src/main/res/values/strings_wearos_standalone.xml`. A separate file avoids merge conflicts with `strings.xml` and the translations from Weblate. For a pull request to AntennaPod, they would move to `strings.xml`, as required by `AGENTS.md`.
 
 ## 6. Phone (`app`, Play Flavor Only)
 
@@ -171,6 +173,10 @@ sequenceDiagram
 | Debug and release version mixed | Does not work because the package name or the signing key does not match. Both sides must be built the same way (`.debug`). |
 | Time on watch and phone differs | Wear OS normally takes the time from the phone. Remaining risk: differences of a few seconds, not critical. |
 | Multiple watches or phones | Not planned. The first connected device is used, as today. |
+| No Wi-Fi nearby when downloading | The episode shows "Waiting for Wi-Fi". The download is retried with increasing intervals and never fails because of missing Wi-Fi. |
+| Download stopped by the system | Not counted as an error. The download continues where it stopped on the next attempt. |
+| Not enough space on the watch | The download fails immediately, without retries. |
+| Settings changed on the phone | The watch receives them the next time the app is opened and applies them immediately, also to a running playback. |
 
 ## 9. Implementation in Steps
 
@@ -196,6 +202,15 @@ Each step works on its own and can later become a separate pull request to Anten
 5. Listen to the end on the watch: on the phone the episode is played and no longer in the queue, on the watch the file is deleted.
 6. With gpodder synchronization: the position from the watch also appears on a second device.
 7. An older position from the watch arrives after a newer one from the phone: the phone keeps the newer one.
+8. Skip to the next episode on the watch a few seconds before the end: the episode is played on the phone and deleted on the watch.
+
+## 10a. Test Cases for Downloads and Settings
+
+1. Download a long episode (over 10 minutes download time): a notification is shown and the download completes.
+2. Start a download without Wi-Fi nearby: the episode shows "Waiting for Wi-Fi" and downloads later when Wi-Fi is available.
+3. Turn off Wi-Fi during a download: the download continues where it stopped.
+4. Download an episode that does not fit into the free storage: the download fails immediately.
+5. Change the skip amounts and the playback speed on the phone during playback on the watch, then open the app on the watch: the new values are used without restarting the playback.
 
 ## 11. Open Points to Discuss with AntennaPod
 
