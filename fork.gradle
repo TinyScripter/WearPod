@@ -1,0 +1,49 @@
+// Settings of the fork "AntennaPod Unofficial WearOs Mod".
+// Applied from the root build.gradle, so the build files of the modules stay identical to upstream
+// and new upstream releases can be merged without conflicts.
+// The version is taken from app/build.gradle (maintained by upstream) and only gets a suffix.
+
+def forkApplicationId = "kleinabersmart.antennapod"
+def forkAppName = "AntennaPod Unofficial WearOs Mod"
+def forkVersionNameSuffix = "-mod"
+// Raise for a fork-only hotfix on the same upstream version (upstream release codes end with 95, so 1 to 4 are free)
+def forkVersionCodeOffset = 0
+// The Wear OS app needs its own version code on Google Play: phone version code * 10 + this digit
+def forkWearVersionCodeDigit = 1
+
+def upstreamVersion = {
+    def text = rootProject.file("app/build.gradle").text
+    def code = text =~ /versionCode\s+(\d+)/
+    def name = text =~ /versionName\s+"([^"]+)"/
+    if (!code.find() || !name.find()) {
+        throw new GradleException("fork.gradle: versionCode or versionName not found in app/build.gradle")
+    }
+    return [code: code.group(1) as int, name: name.group(1)]
+}
+
+subprojects { subproject ->
+    if (subproject.path != ":app" && subproject.path != ":app-wearos") {
+        return
+    }
+    subproject.pluginManager.withPlugin("com.android.application") {
+        def isWear = subproject.path == ":app-wearos"
+        def version = upstreamVersion()
+        subproject.androidComponents {
+            finalizeDsl { android ->
+                android.defaultConfig.applicationId = forkApplicationId
+                android.defaultConfig.versionName = version.name
+                android.defaultConfig.versionNameSuffix = forkVersionNameSuffix
+                def versionCode = version.code + forkVersionCodeOffset
+                android.defaultConfig.versionCode = isWear ? versionCode * 10 + forkWearVersionCodeDigit : versionCode
+                android.buildTypes.each { buildType ->
+                    def isDebug = buildType.name == "debug"
+                    buildType.resValue("string", "app_name", isDebug ? forkAppName + " Debug" : forkAppName)
+                    if (!isWear) {
+                        buildType.resValue("string", "provider_authority",
+                                forkApplicationId + (isDebug ? ".debug" : "") + ".provider")
+                    }
+                }
+            }
+        }
+    }
+}
