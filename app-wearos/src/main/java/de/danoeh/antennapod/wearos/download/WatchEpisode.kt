@@ -19,7 +19,8 @@ data class WatchEpisode(
     val size: Long,
     val fileName: String,
     val status: DownloadStatus,
-    val phoneState: PhoneState = PhoneState.UNPLAYED
+    val phoneState: PhoneState = PhoneState.UNPLAYED,
+    val failedDownloads: Int = 0
 ) {
     fun withPhoneState(state: FeedItem?): WatchEpisode {
         if (state == null) {
@@ -53,6 +54,7 @@ data class WatchEpisode(
         .put(KEY_FILE_NAME, fileName)
         .put(KEY_STATUS, status.name)
         .put(KEY_PHONE_STATE, phoneState.name)
+        .put(KEY_FAILED_DOWNLOADS, failedDownloads)
 
     companion object {
         private const val KEY_ITEM_ID = "item_id"
@@ -67,6 +69,7 @@ data class WatchEpisode(
         private const val KEY_FILE_NAME = "file_name"
         private const val KEY_STATUS = "status"
         private const val KEY_PHONE_STATE = "phone_state"
+        private const val KEY_FAILED_DOWNLOADS = "failed_downloads"
 
         fun fromJson(obj: JSONObject) = WatchEpisode(
             itemId = obj.getLong(KEY_ITEM_ID),
@@ -80,7 +83,8 @@ data class WatchEpisode(
             size = obj.optLong(KEY_SIZE),
             fileName = obj.getString(KEY_FILE_NAME),
             status = DownloadStatus.entries.find { it.name == obj.optString(KEY_STATUS) } ?: DownloadStatus.FAILED,
-            phoneState = PhoneState.entries.find { it.name == obj.optString(KEY_PHONE_STATE) } ?: PhoneState.UNPLAYED
+            phoneState = PhoneState.entries.find { it.name == obj.optString(KEY_PHONE_STATE) } ?: PhoneState.UNPLAYED,
+            failedDownloads = obj.optInt(KEY_FAILED_DOWNLOADS)
         )
     }
 }

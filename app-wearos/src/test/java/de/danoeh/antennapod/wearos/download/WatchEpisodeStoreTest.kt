@@ -45,7 +45,7 @@ class WatchEpisodeStoreTest {
 
     @Test
     fun testJsonRoundTrip() {
-        val episode = episode(1).copy(phoneState = PhoneState.PLAYED)
+        val episode = episode(1).copy(phoneState = PhoneState.PLAYED, failedDownloads = 2)
 
         assertEquals(episode, WatchEpisode.fromJson(episode.toJson()))
     }

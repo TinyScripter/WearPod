@@ -42,7 +42,9 @@ class WatchListViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun retry(itemId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            WatchEpisodeStore.update(getApplication(), itemId) { it.copy(status = DownloadStatus.QUEUED) }
+            WatchEpisodeStore.update(getApplication(), itemId) {
+                it.copy(status = DownloadStatus.QUEUED, failedDownloads = 0)
+            }
             EpisodeDownloadWorker.enqueue(getApplication(), itemId)
         }
     }
