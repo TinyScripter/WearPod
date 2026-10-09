@@ -23,6 +23,9 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 data class WatchPlayerUiState(
@@ -69,9 +72,11 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
         }, ContextCompat.getMainExecutor(application))
 
         viewModelScope.launch {
-            while (true) {
-                updateState()
-                delay(1.seconds)
+            _uiState.subscriptionCount.map { it > 0 }.distinctUntilChanged().collectLatest { isVisible ->
+                while (isVisible) {
+                    updateState()
+                    delay(1.seconds)
+                }
             }
         }
     }
