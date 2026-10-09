@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.wearos.composable
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,13 +15,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 
 @Composable
-fun ListItem(text: String, @DrawableRes iconRes: Int? = null, onClick: () -> Unit) {
+fun ListItem(
+    text: String,
+    @DrawableRes iconRes: Int? = null,
+    secondaryText: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
     FilledTonalButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onLongClick = onLongClick
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -34,7 +43,17 @@ fun ListItem(text: String, @DrawableRes iconRes: Int? = null, onClick: () -> Uni
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Column {
+                Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (secondaryText != null) {
+                    Text(
+                        text = secondaryText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
         }
     }
 }

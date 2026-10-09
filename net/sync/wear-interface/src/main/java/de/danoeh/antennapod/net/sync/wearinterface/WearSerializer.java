@@ -22,6 +22,20 @@ public final class WearSerializer {
     private static final String KEY_DURATION = "duration";
     private static final String KEY_POSITION = "position";
     private static final String KEY_IS_PLAYING = "is_playing";
+    private static final String KEY_LAST_PLAYED = "last_played";
+    private static final String KEY_PLAYED = "played";
+    private static final String KEY_GUID = "guid";
+    private static final String KEY_FEED_TITLE = "feed_title";
+    private static final String KEY_DOWNLOAD_URL = "download_url";
+    private static final String KEY_MIME_TYPE = "mime_type";
+    private static final String KEY_SIZE = "size";
+    private static final String KEY_REWIND_SECS = "rewind_secs";
+    private static final String KEY_FAST_FORWARD_SECS = "fast_forward_secs";
+    private static final String KEY_SMART_MARK_AS_PLAYED_SECS = "smart_mark_as_played_secs";
+    private static final String KEY_PLAYBACK_SPEED = "playback_speed";
+    private static final String KEY_START_POSITION = "start_position";
+    private static final String KEY_TIMESTAMP = "timestamp";
+    private static final String KEY_COMPLETED = "completed";
 
     private WearSerializer() {
     }
@@ -48,9 +62,35 @@ public final class WearSerializer {
         }
         int duration = obj.optInt(KEY_DURATION, 0);
         int position = obj.optInt(KEY_POSITION, 0);
-        FeedMedia media = new FeedMedia(0, item, duration, position, 0, null, null, null, 0, null, 0, 0L);
+        long size = obj.optLong(KEY_SIZE, 0);
+        String mimeType = obj.optString(KEY_MIME_TYPE, null);
+        String downloadUrl = obj.optString(KEY_DOWNLOAD_URL, null);
+        long lastPlayed = obj.optLong(KEY_LAST_PLAYED, 0);
+        Date lastPlayedDate = lastPlayed != 0 ? new Date(lastPlayed) : null;
+        FeedMedia media = new FeedMedia(0, item, duration, position, size, mimeType, null, downloadUrl,
+                0, lastPlayedDate, 0, 0L);
         item.setMedia(media);
+        if (obj.has(KEY_PLAYED)) {
+            item.setPlayed(obj.optBoolean(KEY_PLAYED, false));
+        }
+        item.setItemIdentifier(obj.optString(KEY_GUID, null));
+        String feedTitle = obj.optString(KEY_FEED_TITLE, null);
+        if (feedTitle != null) {
+            Feed feed = new Feed(null, null);
+            feed.setTitle(feedTitle);
+            item.setFeed(feed);
+        }
         return item;
+    }
+
+    @NonNull
+    private static JSONObject playbackStateToJson(@NonNull FeedItem item) throws JSONException {
+        JSONObject obj = episodeToJson(item);
+        obj.put(KEY_PLAYED, item.isPlayed());
+        if (item.getMedia() != null && item.getMedia().getLastPlayedTimeHistory() != null) {
+            obj.put(KEY_LAST_PLAYED, item.getMedia().getLastPlayedTimeHistory().getTime());
+        }
+        return obj;
     }
 
     @NonNull
@@ -78,6 +118,147 @@ public final class WearSerializer {
             // return whatever we managed to parse
         }
         return items;
+    }
+
+    @NonNull
+    public static byte[] episodeDetailsToBytes(@NonNull FeedItem item) {
+        try {
+            JSONObject obj = playbackStateToJson(item);
+            obj.put(KEY_GUID, item.getItemIdentifier());
+            if (item.getFeed() != null) {
+                obj.put(KEY_FEED_TITLE, item.getFeed().getTitle());
+            }
+            FeedMedia media = item.getMedia();
+            if (media != null) {
+                obj.put(KEY_DOWNLOAD_URL, media.getDownloadUrl());
+                obj.put(KEY_MIME_TYPE, media.getMimeType());
+                obj.put(KEY_SIZE, media.getSize());
+            }
+            return obj.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e) {
+            return new byte[0];
+        }
+    }
+
+    @Nullable
+    public static FeedItem episodeDetailsFromBytes(@NonNull byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        try {
+            return episodeFromJson(new JSONObject(new String(data, StandardCharsets.UTF_8)));
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    @NonNull
+    public static byte[] idsToBytes(@NonNull List<Long> ids) {
+        JSONArray array = new JSONArray();
+        for (long id : ids) {
+            array.put(id);
+        }
+        return array.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @NonNull
+    public static List<Long> idsFromBytes(@Nullable byte[] data) {
+        List<Long> ids = new ArrayList<>();
+        if (data == null || data.length == 0) {
+            return ids;
+        }
+        try {
+            JSONArray array = new JSONArray(new String(data, StandardCharsets.UTF_8));
+            for (int i = 0; i < array.length(); i++) {
+                ids.add(array.getLong(i));
+            }
+        } catch (JSONException e) {
+            // return whatever we managed to parse
+        }
+        return ids;
+    }
+
+    @NonNull
+    public static byte[] playbackStatesToBytes(@NonNull List<FeedItem> items) {
+        JSONArray array = new JSONArray();
+        for (FeedItem item : items) {
+            try {
+                array.put(playbackStateToJson(item));
+            } catch (JSONException e) {
+                // skip malformed item
+            }
+        }
+        return array.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @NonNull
+    public static byte[] settingsToBytes(@NonNull WearSettings settings) {
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put(KEY_REWIND_SECS, settings.rewindSecs);
+            obj.put(KEY_FAST_FORWARD_SECS, settings.fastForwardSecs);
+            obj.put(KEY_SMART_MARK_AS_PLAYED_SECS, settings.smartMarkAsPlayedSecs);
+            obj.put(KEY_PLAYBACK_SPEED, settings.playbackSpeed);
+            return obj.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e) {
+            return new byte[0];
+        }
+    }
+
+    @Nullable
+    public static WearSettings settingsFromBytes(@NonNull byte[] data) {
+        if (data.length == 0) {
+            return null;
+        }
+        try {
+            JSONObject obj = new JSONObject(new String(data, StandardCharsets.UTF_8));
+            return new WearSettings(
+                    obj.optInt(KEY_REWIND_SECS, WearSettings.DEFAULT_REWIND_SECS),
+                    obj.optInt(KEY_FAST_FORWARD_SECS, WearSettings.DEFAULT_FAST_FORWARD_SECS),
+                    obj.optInt(KEY_SMART_MARK_AS_PLAYED_SECS, WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS),
+                    (float) obj.optDouble(KEY_PLAYBACK_SPEED, WearSettings.DEFAULT_PLAYBACK_SPEED));
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    @NonNull
+    public static byte[] positionToBytes(@NonNull WearPosition position) {
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put(KEY_EPISODE_ID, position.itemId);
+            obj.put(KEY_GUID, position.guid);
+            obj.put(KEY_DOWNLOAD_URL, position.episodeUrl);
+            obj.put(KEY_POSITION, position.position);
+            obj.put(KEY_DURATION, position.duration);
+            obj.put(KEY_START_POSITION, position.startPosition);
+            obj.put(KEY_TIMESTAMP, position.timestamp);
+            obj.put(KEY_COMPLETED, position.completed);
+            return obj.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e) {
+            return new byte[0];
+        }
+    }
+
+    @Nullable
+    public static WearPosition positionFromBytes(@Nullable byte[] data) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        try {
+            JSONObject obj = new JSONObject(new String(data, StandardCharsets.UTF_8));
+            return new WearPosition(
+                    obj.optLong(KEY_EPISODE_ID, -1),
+                    obj.optString(KEY_GUID, null),
+                    obj.optString(KEY_DOWNLOAD_URL, null),
+                    obj.optInt(KEY_POSITION, 0),
+                    obj.optInt(KEY_DURATION, 0),
+                    obj.optInt(KEY_START_POSITION, 0),
+                    obj.optLong(KEY_TIMESTAMP, 0),
+                    obj.optBoolean(KEY_COMPLETED, false));
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     @NonNull

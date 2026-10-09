@@ -75,6 +75,12 @@ dependencies {
     implementation libs.kotlinx.coroutines.play.services
     implementation libs.androidx.activity.compose
     implementation libs.androidx.appcompat
+    implementation libs.androidx.work.runtime
+    implementation libs.okhttp
+    implementation libs.androidx.media3.exoplayer
+    implementation libs.androidx.media3.session
+    implementation libs.androidx.media3.ui
 
     testImplementation libs.junit
+    testImplementation libs.robolectric
 }

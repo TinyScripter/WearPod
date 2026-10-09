@@ -50,6 +50,9 @@ class MainListActivity : ComponentActivity() {
                     onOpenFeedList = {
                         startActivity(Intent(this, FeedListActivity::class.java))
                     },
+                    onOpenWatchList = {
+                        startActivity(Intent(this, WatchListActivity::class.java))
+                    },
                     onOpenEpisodeList = { path ->
                         val intent = Intent(this, EpisodeListActivity::class.java).apply {
                             putExtra(EpisodeListActivity.EXTRA_PATH, path)
@@ -67,6 +70,7 @@ fun MainListScreen(
     uiState: MainUiState,
     onOpenEpisodeDetail: (FeedItem) -> Unit,
     onOpenFeedList: () -> Unit,
+    onOpenWatchList: () -> Unit,
     onOpenEpisodeList: (String) -> Unit
 ) {
     val scrollState = rememberScalingLazyListState()
@@ -91,6 +95,24 @@ fun MainListScreen(
                 ListHeader(modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.app_name))
                 }
+            }
+
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.wearos_on_watch),
+                    iconRes = CommonR.drawable.ic_watch_black,
+                    onClick = onOpenWatchList
+                )
+            }
+
+            item {
+                Text(
+                    text = stringResource(CommonR.string.wearos_remote_play),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
             }
 
             item {

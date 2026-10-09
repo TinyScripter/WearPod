@@ -48,6 +48,7 @@ import de.danoeh.antennapod.ui.common.DateFormatter
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.composable.ListItem
+import de.danoeh.antennapod.wearos.download.DownloadStatus
 
 class EpisodeDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +69,9 @@ class EpisodeDetailActivity : ComponentActivity() {
                     onPause = { viewModel.pause() },
                     onSkipForward = { viewModel.skipForward() },
                     onSkipBackward = { viewModel.skipBackward() },
-                    onOpenOnPhone = { viewModel.openOnPhone() }
+                    onOpenOnPhone = { viewModel.openOnPhone() },
+                    onDownloadToWatch = { viewModel.downloadToWatch() },
+                    onRemoveFromWatch = { viewModel.removeFromWatch() }
                 )
             }
         }
@@ -86,7 +89,9 @@ fun EpisodeDetailScreen(
     onPause: () -> Unit,
     onSkipForward: () -> Unit,
     onSkipBackward: () -> Unit,
-    onOpenOnPhone: () -> Unit
+    onOpenOnPhone: () -> Unit,
+    onDownloadToWatch: () -> Unit,
+    onRemoveFromWatch: () -> Unit
 ) {
     val item = uiState.item
     val scrollState = rememberScalingLazyListState()
@@ -220,6 +225,46 @@ fun EpisodeDetailScreen(
                     iconRes = CommonR.drawable.ic_phone_black,
                     onClick = onOpenOnPhone
                 )
+            }
+
+            val watchEpisode = uiState.watchEpisode
+            val watchStatus = watchEpisode?.status
+            if (uiState.canDownloadToWatch && (watchStatus == null || watchStatus == DownloadStatus.FAILED)) {
+                item {
+                    ListItem(
+                        text = stringResource(CommonR.string.wearos_download_to_watch),
+                        iconRes = CommonR.drawable.ic_download_black,
+                        secondaryText = if (uiState.isRequestingDownload) {
+                            stringResource(CommonR.string.download_pending)
+                        } else {
+                            watchEpisode?.let { downloadStatusText(it, uiState.downloadProgress) }
+                        },
+                        onClick = onDownloadToWatch
+                    )
+                }
+            }
+
+            if (watchEpisode != null) {
+                item {
+                    ListItem(
+                        text = stringResource(CommonR.string.wearos_remove_from_watch),
+                        secondaryText = downloadStatusText(watchEpisode, uiState.downloadProgress)
+                            .takeIf { watchStatus != DownloadStatus.FAILED },
+                        onClick = onRemoveFromWatch
+                    )
+                }
+            }
+
+            if (uiState.watchErrorRes != null) {
+                item {
+                    Text(
+                        text = stringResource(uiState.watchErrorRes),
+                        modifier = Modifier.padding(8.dp),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
 
             item {

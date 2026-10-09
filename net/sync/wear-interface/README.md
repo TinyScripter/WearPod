@@ -18,3 +18,18 @@ The actual communication is located in `:app` and `:app-wearos`, the `:net:sync:
 - `PAUSE`: watch sends to pause playback on the phone
 - `FEED_EPISODES_PREFIX + feedId`: watch requests episodes for a specific feed
 - `OPEN_ON_PHONE_PREFIX + itemId`: watch requests the phone to open an episode in the main app
+- `EPISODE_DETAILS_PREFIX + itemId`: watch requests download URL, MIME type, size, GUID, feed title and playback state of an episode
+- `POSITIONS`: watch sends a list of episode IDs, the phone replies with position, last played time and played state of the episodes it still knows
+- `SETTINGS`: watch requests skip amounts, smart mark as played threshold and playback speed
+
+## Data items
+
+Playback positions of episodes played on the watch must not get lost while the phone is not reachable.
+They are therefore not sent as messages but stored as data items using `Wearable.getDataClient()`.
+
+- `WATCH_POSITION_PREFIX + itemId`: written by the watch, contains a `WearPosition`. There is one data item per episode, newer states replace older ones. The phone applies the position and then deletes the data item.
+
+## Capabilities
+
+- `wear_capability_phone`: phone supports remote control
+- `wear_capability_phone_standalone`: phone additionally supports `EPISODE_DETAILS_PREFIX`, `POSITIONS`, `SETTINGS` and `WATCH_POSITION_PREFIX`
