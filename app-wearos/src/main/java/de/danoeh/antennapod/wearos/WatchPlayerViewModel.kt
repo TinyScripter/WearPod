@@ -87,7 +87,7 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
             return
         }
         viewModelScope.launch {
-            PositionSync.syncFromPhone(getApplication())
+            PositionSync.syncFromPhone(getApplication(), itemId)
             if (controller.currentMediaItem?.mediaId == itemId.toString()) {
                 controller.play()
             } else {

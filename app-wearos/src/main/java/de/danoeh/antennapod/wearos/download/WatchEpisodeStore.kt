@@ -114,13 +114,33 @@ object WatchEpisodeStore {
     }
 
     @Synchronized
-    fun applyPhoneStates(context: Context, requestedIds: List<Long>, states: List<FeedItem>) {
+    fun applyPhoneStates(
+        context: Context,
+        requestedIds: List<Long>,
+        states: List<FeedItem>,
+        keepItemIds: Set<Long> = emptySet()
+    ): List<Long> {
         load(context)
         val statesById = states.associateBy { it.id }
-        _episodes.value = _episodes.value.map {
-            if (it.itemId in requestedIds) it.withPhoneState(statesById[it.itemId]) else it
+        val episodes = _episodes.value.map {
+            if (it.itemId !in requestedIds) {
+                it
+            } else if (it.itemId in keepItemIds) {
+                it.withPhoneState(statesById[it.itemId]).copy(phoneState = it.phoneState)
+            } else {
+                it.withPhoneState(statesById[it.itemId])
+            }
         }
+        val finishedOnPhone = episodes.filter { episode ->
+            episode.phoneState != PhoneState.UNPLAYED &&
+                _episodes.value.any { it.itemId == episode.itemId && it.phoneState == PhoneState.UNPLAYED }
+        }
+        val finishedIds = finishedOnPhone.map { it.itemId }
+        _episodes.value = episodes.filter { it.itemId !in finishedIds }
+        _progress.update { it - finishedIds.toSet() }
         save(context)
+        finishedOnPhone.forEach { getFile(context, it).delete() }
+        return finishedIds
     }
 
     @Synchronized

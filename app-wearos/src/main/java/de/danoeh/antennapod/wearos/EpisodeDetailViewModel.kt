@@ -13,6 +13,7 @@ import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.wearos.download.DownloadStatus
 import de.danoeh.antennapod.wearos.download.EpisodeDownloadWorker
+import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
 import de.danoeh.antennapod.wearos.sync.WearDataRepository
@@ -135,7 +136,8 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
                 lastPlayed = media.lastPlayedTimeHistory?.time ?: 0,
                 size = media.size,
                 fileName = "${details.id}.$extension",
-                status = DownloadStatus.QUEUED
+                status = DownloadStatus.QUEUED,
+                phoneState = if (details.isPlayed) PhoneState.PLAYED else PhoneState.UNPLAYED
             )
             withContext(Dispatchers.IO) {
                 WatchEpisodeStore.put(getApplication(), watchEpisode)

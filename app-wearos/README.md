@@ -47,4 +47,6 @@ The most recent timestamp wins, both on the watch and on the phone.
 `PositionReporter` writes the position of an episode into a data item whenever `WatchPlaybackService` stores it.
 Data items are delivered to the phone as soon as it is reachable, so this also works when playing without the phone.
 `PositionSync` requests the playback state of all episodes on the watch from the phone when the list of episodes is opened and before playback starts.
-Episodes that were played or deleted on the phone are marked in the list and are skipped when playing the next episode.
+Episodes that were played or deleted on the phone since the last synchronization are removed from the watch automatically, including their files.
+The episode that is currently loaded in `WatchPlaybackService` and the episode that is being started are kept, they are removed on a later synchronization.
+Episodes that were already played on the phone when they were downloaded to the watch are not removed automatically. They are marked in the list, are skipped when playing the next episode and can be removed with "Delete played".

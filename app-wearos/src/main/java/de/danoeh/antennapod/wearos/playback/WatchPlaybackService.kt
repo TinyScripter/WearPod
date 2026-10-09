@@ -95,7 +95,8 @@ class WatchPlaybackService : MediaSessionService() {
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            val itemId = mediaItem?.mediaId?.toLongOrNull() ?: return
+            currentItemId = mediaItem?.mediaId?.toLongOrNull()
+            val itemId = currentItemId ?: return
             val position = WatchEpisodeStore.get(this@WatchPlaybackService, itemId)?.position ?: 0
             startPosition = position
             if (position > 0 && reason != Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) {
@@ -239,6 +240,7 @@ class WatchPlaybackService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession = mediaSession
 
     override fun onDestroy() {
+        currentItemId = null
         mainScope.cancel()
         if (player.isPlaying) {
             saveCurrentPosition()
@@ -296,5 +298,9 @@ class WatchPlaybackService : MediaSessionService() {
     companion object {
         private const val TAG = "WatchPlaybackService"
         private val SAVE_INTERVAL = 60.seconds
+
+        @Volatile
+        var currentItemId: Long? = null
+            private set
     }
 }

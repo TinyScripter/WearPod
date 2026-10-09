@@ -168,7 +168,7 @@ sequenceDiagram
 |---|---|
 | Watch without the phone for hours | Positions are kept as data items on the watch and are delivered on the next contact. |
 | Same episode first on the watch, then continued on the phone | The phone has the newer timestamp. The watch fetches the position via `/positions` before the next start. |
-| Episode marked as played or deleted on the phone | On the next `/positions`, the phone reports "played", or the episode is missing from the reply. The watch shows this and offers to delete the file. |
+| Episode marked as played or deleted on the phone | On the next `/positions`, the phone reports "played", or the episode is missing from the reply. The watch removes the episode and deletes the file, except the episode that is currently playing or being started; it is removed on a later synchronization. Episodes that were already played when they were downloaded stay on the watch and are marked as played. |
 | Database re-imported on the phone (different IDs) | Fallback lookup using GUID or download URL. |
 | Debug and release version mixed | Does not work because the package name or the signing key does not match. Both sides must be built the same way (`.debug`). |
 | Time on watch and phone differs | Wear OS normally takes the time from the phone. Remaining risk: differences of a few seconds, not critical. |
@@ -203,6 +203,7 @@ Each step works on its own and can later become a separate pull request to Anten
 6. With gpodder synchronization: the position from the watch also appears on a second device.
 7. An older position from the watch arrives after a newer one from the phone: the phone keeps the newer one.
 8. Skip to the next episode on the watch a few seconds before the end: the episode is played on the phone and deleted on the watch.
+9. Mark an episode as played on the phone, then open the list on the watch: the episode and its file are removed from the watch.
 
 ## 10a. Test Cases for Downloads and Settings
 

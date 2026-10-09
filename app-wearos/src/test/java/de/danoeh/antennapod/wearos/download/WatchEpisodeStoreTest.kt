@@ -130,10 +130,45 @@ class WatchEpisodeStoreTest {
         played.id = 1
         played.setPlayed(true)
 
-        WatchEpisodeStore.applyPhoneStates(context, listOf(1L, 2L), listOf(played))
+        val file = WatchEpisodeStore.getFile(context, episode(1))
+        file.parentFile?.mkdirs()
+        file.writeText("audio")
 
-        assertEquals(PhoneState.PLAYED, WatchEpisodeStore.get(context, 1)?.phoneState)
-        assertEquals(PhoneState.DELETED, WatchEpisodeStore.get(context, 2)?.phoneState)
+        val removed = WatchEpisodeStore.applyPhoneStates(context, listOf(1L, 2L), listOf(played))
+
+        assertEquals(listOf(1L, 2L), removed)
+        assertNull(WatchEpisodeStore.get(context, 1))
+        assertNull(WatchEpisodeStore.get(context, 2))
+        assertFalse(file.exists())
         assertEquals(PhoneState.UNPLAYED, WatchEpisodeStore.get(context, 3)?.phoneState)
+    }
+
+    @Test
+    fun testApplyPhoneStatesKeepsItems() {
+        (1L..2L).forEach { WatchEpisodeStore.put(context, episode(it)) }
+        val played = FeedItem()
+        played.id = 1
+        played.setPlayed(true)
+
+        val removed = WatchEpisodeStore.applyPhoneStates(context, listOf(1L, 2L), listOf(played), setOf(1L, 2L))
+
+        assertTrue(removed.isEmpty())
+        assertEquals(PhoneState.UNPLAYED, WatchEpisodeStore.get(context, 1)?.phoneState)
+        assertEquals(PhoneState.UNPLAYED, WatchEpisodeStore.get(context, 2)?.phoneState)
+
+        assertEquals(listOf(1L, 2L), WatchEpisodeStore.applyPhoneStates(context, listOf(1L, 2L), listOf(played)))
+    }
+
+    @Test
+    fun testApplyPhoneStatesKeepsEpisodesPlayedBeforeDownload() {
+        WatchEpisodeStore.put(context, episode(1).copy(phoneState = PhoneState.PLAYED))
+        val played = FeedItem()
+        played.id = 1
+        played.setPlayed(true)
+
+        val removed = WatchEpisodeStore.applyPhoneStates(context, listOf(1L), listOf(played))
+
+        assertTrue(removed.isEmpty())
+        assertEquals(PhoneState.PLAYED, WatchEpisodeStore.get(context, 1)?.phoneState)
     }
 }
