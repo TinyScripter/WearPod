@@ -10,6 +10,8 @@ def forkVersionNameSuffix = "-mod"
 def forkVersionCodeOffset = 0
 // The Wear OS app needs its own version code on Google Play: phone version code * 10 + this digit
 def forkWearVersionCodeDigit = 1
+// Minimum SDK required by Google Play for the fork, upstream values above it are kept
+def forkMinSdk = 24
 
 def upstreamVersion = {
     def text = rootProject.file("app/build.gradle").text
@@ -31,6 +33,7 @@ subprojects { subproject ->
         subproject.androidComponents {
             finalizeDsl { android ->
                 android.defaultConfig.applicationId = forkApplicationId
+                android.defaultConfig.minSdk = Math.max(android.defaultConfig.minSdk ?: 0, forkMinSdk)
                 android.defaultConfig.versionName = version.name
                 android.defaultConfig.versionNameSuffix = forkVersionNameSuffix
                 def versionCode = version.code + forkVersionCodeOffset

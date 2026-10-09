@@ -18,7 +18,7 @@ Beide Arbeits-Branches basieren direkt auf `develop` und hängen nicht voneinand
 
 ### Was liegt wo, damit Merges konfliktarm bleiben
 
-- **App-ID, App-Name, Provider-Authority, Version:** nur in `fork.gradle`. Sie wird über eine einzige Zeile am Ende der Root-`build.gradle` eingebunden. `app/build.gradle` und `app-wearos/build.gradle` bleiben identisch mit Upstream.
+- **App-ID, App-Name, Provider-Authority, Version, minSdk 24 (für Google Play):** nur in `fork.gradle`. Sie wird über eine einzige Zeile am Ende der Root-`build.gradle` eingebunden. `app/build.gradle` und `app-wearos/build.gradle` bleiben identisch mit Upstream.
 - **Version:** `fork.gradle` liest `versionCode`/`versionName` aus `app/build.gradle` (pflegt Upstream) und hängt `-mod` an. Die Uhr bekommt `versionCode × 10 + 1`. Beispiel: Upstream 3.12.3 (`3120395`) ergibt Phone `3.12.3-mod` / `3120395` und Uhr `3.12.3-mod` / `31203951`. Bei einem neuen Release ist deshalb **nichts** anzupassen.
 - **Strings der Fork-Funktionen:** in `ui/i18n/src/main/res/values/strings_wearos_standalone.xml` und `values-de/strings_wearos_standalone.xml`. `strings.xml` und die von Weblate gepflegten Übersetzungen bleiben unverändert.
 
