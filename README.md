@@ -58,6 +58,7 @@ If you prefer not to share your email address, you can download the APKs directl
 - Playback on Bluetooth headphones
 - Synchronization of the playback progress from the watch to the phone and from the phone to the watch. The most recent position wins, and positions from the watch are passed on to the gpodder synchronization of the phone
 - Played episodes are marked as played on the phone and removed from the queue, and their files are deleted from the watch
+- Episodes that are played or deleted on the phone are removed from the watch on the next synchronization
 
 The phone stays in charge: subscriptions, episodes and the queue are managed on the phone only.
 See [wearos_concept.md](wearos_concept.md) for the design of the feature.
