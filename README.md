@@ -49,9 +49,11 @@ If you prefer not to share your email address, you can download the APKs directl
 - Browse the queue, downloads, subscriptions and episodes of the phone on the watch
 - Remote control the playback on the phone
 - Download episodes to the watch (over Wi-Fi, directly from the podcast's server) and play them without the phone
+- Downloads show a notification, wait for Wi-Fi if none is available and continue where they stopped after an interruption
 - Separate lists for playback on the watch and playback on the phone on the start screen
 - Own order of the episodes on the watch, which can be changed on the watch
 - Playback controls on the watch: play and pause, skip back and forward, next episode
+- Skip amounts, playback speed and "smart mark as played" are taken over from the settings of the phone
 - Volume control with the rotating crown
 - Playback on Bluetooth headphones
 - Synchronization of the playback progress from the watch to the phone and from the phone to the watch. The most recent position wins, and positions from the watch are passed on to the gpodder synchronization of the phone
