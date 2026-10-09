@@ -7,6 +7,7 @@ import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -28,11 +29,13 @@ import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
 import de.danoeh.antennapod.wearos.sync.PositionReporter
+import de.danoeh.antennapod.wearos.sync.WearDataRepository
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /**
@@ -49,6 +52,8 @@ class WatchPlaybackService : MediaSessionService() {
     private val lastSavedTimestamps = mutableMapOf<Long, Long>()
     private val completedItemIds = mutableSetOf<Long>()
     private var smartMarkAsPlayedSecs = WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS
+    private var seekBackIncrementMs = WearSettings.DEFAULT_REWIND_SECS * 1000L
+    private var seekForwardIncrementMs = WearSettings.DEFAULT_FAST_FORWARD_SECS * 1000L
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -158,10 +163,23 @@ class WatchPlaybackService : MediaSessionService() {
         player.addMediaItems(playlist.subList(currentIndex + 1, playlist.size).map { buildMediaItem(it) })
     }
 
+    private fun applySettings(settings: WearSettings) {
+        smartMarkAsPlayedSecs = settings.smartMarkAsPlayedSecs
+        seekBackIncrementMs = settings.rewindSecs.coerceAtLeast(1) * 1000L
+        seekForwardIncrementMs = settings.fastForwardSecs.coerceAtLeast(1) * 1000L
+        player.setPlaybackSpeed(settings.playbackSpeed)
+    }
+
+    private fun seekBy(offsetMs: Long) {
+        var positionMs = player.currentPosition + offsetMs
+        if (player.duration != C.TIME_UNSET) {
+            positionMs = positionMs.coerceAtMost(player.duration)
+        }
+        player.seekTo(positionMs.coerceAtLeast(0))
+    }
+
     override fun onCreate() {
         super.onCreate()
-        val settings = WatchSettingsStore.load(this)
-        smartMarkAsPlayedSecs = settings.smartMarkAsPlayedSecs
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_MEDIA)
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
@@ -170,11 +188,9 @@ class WatchPlaybackService : MediaSessionService() {
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_LOCAL)
-            .setSeekBackIncrementMs(settings.rewindSecs.coerceAtLeast(1) * 1000L)
-            .setSeekForwardIncrementMs(settings.fastForwardSecs.coerceAtLeast(1) * 1000L)
             .setSuppressPlaybackOnUnsuitableOutput(true)
             .build()
-        player.setPlaybackSpeed(settings.playbackSpeed)
+        applySettings(WatchSettingsStore.load(this))
         player.addListener(WearUnsuitableOutputPlaybackSuppressionResolverListener(this))
         player.addListener(playerListener)
 
@@ -184,7 +200,16 @@ class WatchPlaybackService : MediaSessionService() {
             Intent(this, WatchPlayerActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
-        mediaSession = MediaSession.Builder(this, player)
+        val sessionPlayer = object : ForwardingPlayer(player) {
+            override fun getSeekBackIncrement() = seekBackIncrementMs
+
+            override fun getSeekForwardIncrement() = seekForwardIncrementMs
+
+            override fun seekBack() = seekBy(-seekBackIncrementMs)
+
+            override fun seekForward() = seekBy(seekForwardIncrementMs)
+        }
+        mediaSession = MediaSession.Builder(this, sessionPlayer)
             .setCallback(sessionCallback)
             .setSessionActivity(sessionActivity)
             .build()
@@ -195,6 +220,10 @@ class WatchPlaybackService : MediaSessionService() {
 
         mainScope.launch {
             WatchEpisodeStore.episodes.collect { updatePlaylist(it) }
+        }
+
+        mainScope.launch {
+            WearDataRepository.settings.filterNotNull().collect { applySettings(it) }
         }
 
         mainScope.launch {
