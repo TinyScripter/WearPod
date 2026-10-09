@@ -7,3 +7,5 @@ plugins {
     id 'checkstyle'
     alias(libs.plugins.ktlint) apply false
 }
+
+apply from: "fork.gradle"
