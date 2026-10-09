@@ -118,6 +118,9 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
                     read = input.read(buffer)
                 }
             }
+            if (isStopped) {
+                throw IOException("Download of episode ${episode.itemId} was stopped")
+            }
             return downloaded
         }
     }
