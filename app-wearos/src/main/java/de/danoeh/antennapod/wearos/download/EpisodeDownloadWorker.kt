@@ -89,6 +89,10 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
         }
         clientBuilder.build().newCall(requestBuilder.build()).execute().use { response ->
             if (response.code == HTTP_RANGE_NOT_SATISFIABLE) {
+                val total = response.header("Content-Range")?.substringAfter("*/", "")?.toLongOrNull()
+                if (total == existing) {
+                    return existing
+                }
                 file.delete()
             }
             val body = response.body
