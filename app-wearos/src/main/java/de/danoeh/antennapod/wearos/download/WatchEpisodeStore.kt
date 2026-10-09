@@ -1,6 +1,8 @@
 package de.danoeh.antennapod.wearos.download
 
 import android.content.Context
+import android.os.Build
+import android.os.storage.StorageManager
 import android.util.AtomicFile
 import android.util.Log
 import androidx.core.util.readText
@@ -23,6 +25,7 @@ object WatchEpisodeStore {
     private const val FILE_NAME = "watch_episodes.json"
     private const val EPISODES_DIR = "episodes"
     private const val STORAGE_LIMIT_BYTES = 1024L * 1024 * 1024
+    private const val MIN_FREE_BYTES = 100L * 1024 * 1024
 
     private val _episodes = MutableStateFlow<List<WatchEpisode>>(emptyList())
     val episodes: StateFlow<List<WatchEpisode>> = _episodes
@@ -58,10 +61,24 @@ object WatchEpisodeStore {
     }
 
     @Synchronized
-    fun hasSpaceFor(context: Context, itemId: Long, size: Long): Boolean {
+    fun hasSpaceFor(context: Context, itemId: Long, size: Long, missingBytes: Long = size): Boolean {
         load(context)
         val used = _episodes.value.filter { it.itemId != itemId }.sumOf { it.size.coerceAtLeast(0) }
-        return used + size.coerceAtLeast(0) <= STORAGE_LIMIT_BYTES
+        return used + size.coerceAtLeast(0) <= STORAGE_LIMIT_BYTES &&
+            missingBytes.coerceAtLeast(0) + MIN_FREE_BYTES <= freeBytes(context)
+    }
+
+    fun freeBytes(context: Context): Long {
+        val dir = context.filesDir
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val storageManager = context.getSystemService(StorageManager::class.java)
+                return storageManager.getAllocatableBytes(storageManager.getUuidForPath(dir))
+            } catch (e: IOException) {
+                Log.w(TAG, "Failed to get allocatable bytes", e)
+            }
+        }
+        return dir.usableSpace
     }
 
     @Synchronized

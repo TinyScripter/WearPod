@@ -60,6 +60,10 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
                 it.copy(status = DownloadStatus.DOWNLOADED, size = size)
             }
             return Result.success()
+        } catch (e: InsufficientSpaceException) {
+            Log.e(TAG, "Not enough space for episode $itemId", e)
+            WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.FAILED) }
+            return Result.failure()
         } catch (e: IOException) {
             Log.e(TAG, "Download of episode $itemId failed", e)
             return retryOrFail(itemId, DownloadStatus.QUEUED)
@@ -102,6 +106,10 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
             val append = response.code == HttpURLConnection.HTTP_PARTIAL
             var downloaded = if (append) existing else 0L
             val total = if (body.contentLength() >= 0) body.contentLength() + downloaded else -1L
+            if (total > 0 && !WatchEpisodeStore.hasSpaceFor(applicationContext, episode.itemId, total,
+                    total - downloaded)) {
+                throw InsufficientSpaceException()
+            }
             var lastPercent = -1
             FileOutputStream(file, append).use { output ->
                 val input = body.byteStream()
@@ -155,3 +163,5 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
         }
     }
 }
+
+private class InsufficientSpaceException : IOException("Not enough space on the watch")

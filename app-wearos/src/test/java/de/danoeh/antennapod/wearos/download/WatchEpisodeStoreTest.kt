@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.wearos.download
 
 import android.content.Context
+import android.os.Build
 import de.danoeh.antennapod.model.feed.FeedItem
 import java.io.File
 import org.json.JSONArray
@@ -13,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class WatchEpisodeStoreTest {
@@ -103,12 +105,22 @@ class WatchEpisodeStoreTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.N_MR1])
     fun testHasSpaceFor() {
         WatchEpisodeStore.put(context, episode(1, size = 900L * 1024 * 1024))
 
         assertTrue(WatchEpisodeStore.hasSpaceFor(context, 2, 100L * 1024 * 1024))
         assertFalse(WatchEpisodeStore.hasSpaceFor(context, 2, 200L * 1024 * 1024))
         assertTrue(WatchEpisodeStore.hasSpaceFor(context, 1, 200L * 1024 * 1024))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.N_MR1])
+    fun testHasSpaceForChecksFreeSpace() {
+        val freeBytes = WatchEpisodeStore.freeBytes(context)
+
+        assertFalse(WatchEpisodeStore.hasSpaceFor(context, 1, 100L * 1024 * 1024, freeBytes))
+        assertTrue(WatchEpisodeStore.hasSpaceFor(context, 1, 100L * 1024 * 1024, 0))
     }
 
     @Test
