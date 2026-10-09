@@ -4,6 +4,8 @@ import de.danoeh.antennapod.model.feed.FeedItem
 import de.danoeh.antennapod.model.feed.FeedMedia
 import java.util.Date
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WatchEpisodeTest {
@@ -68,5 +70,14 @@ class WatchEpisodeTest {
 
         assertEquals(60000, result.position)
         assertEquals(PhoneState.DELETED, result.phoneState)
+    }
+
+    @Test
+    fun testIsAlmostEnded() {
+        assertFalse(episode.isAlmostEnded(3500000, 30))
+        assertTrue(episode.isAlmostEnded(3570000, 30))
+        assertTrue(episode.isAlmostEnded(3600000, 0))
+        assertFalse(episode.isAlmostEnded(3599000, 0))
+        assertFalse(episode.copy(duration = 0).isAlmostEnded(3600000, 30))
     }
 }

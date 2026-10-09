@@ -37,6 +37,9 @@ data class WatchEpisode(
         )
     }
 
+    fun isAlmostEnded(position: Long, smartMarkAsPlayedSecs: Int): Boolean =
+        duration > 0 && position >= duration - smartMarkAsPlayedSecs * 1000L
+
     fun toJson(): JSONObject = JSONObject()
         .put(KEY_ITEM_ID, itemId)
         .putOpt(KEY_GUID, guid)

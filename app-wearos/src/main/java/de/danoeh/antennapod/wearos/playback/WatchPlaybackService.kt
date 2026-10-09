@@ -20,6 +20,7 @@ import androidx.media3.ui.WearUnsuitableOutputPlaybackSuppressionResolverListene
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import de.danoeh.antennapod.net.sync.wearinterface.WearPosition
+import de.danoeh.antennapod.net.sync.wearinterface.WearSettings
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.WatchPlayerActivity
 import de.danoeh.antennapod.wearos.download.DownloadStatus
@@ -47,6 +48,7 @@ class WatchPlaybackService : MediaSessionService() {
     private var startPosition = 0
     private val lastSavedTimestamps = mutableMapOf<Long, Long>()
     private val completedItemIds = mutableSetOf<Long>()
+    private var smartMarkAsPlayedSecs = WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -66,6 +68,11 @@ class WatchPlaybackService : MediaSessionService() {
             } else if (reason == Player.DISCONTINUITY_REASON_SEEK || reason == Player.DISCONTINUITY_REASON_REMOVE) {
                 if (oldPosition.mediaItem?.mediaId == newPosition.mediaItem?.mediaId) {
                     savePosition(oldItemId, newPosition.positionMs)
+                } else if (reason == Player.DISCONTINUITY_REASON_SEEK &&
+                    WatchEpisodeStore.get(this@WatchPlaybackService, oldItemId)
+                        ?.isAlmostEnded(oldPosition.positionMs, smartMarkAsPlayedSecs) == true
+                ) {
+                    complete(oldItemId)
                 } else if (player.playWhenReady) {
                     savePosition(oldItemId, oldPosition.positionMs)
                 }
@@ -154,6 +161,7 @@ class WatchPlaybackService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         val settings = WatchSettingsStore.load(this)
+        smartMarkAsPlayedSecs = settings.smartMarkAsPlayedSecs
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_MEDIA)
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
