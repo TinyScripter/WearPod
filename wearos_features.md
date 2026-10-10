@@ -106,6 +106,7 @@ Gleiches Verhalten wie `PlaybackSpeedUtils.getCurrentPlaybackSpeed` auf dem Phon
 - **Uhr:** `ChapterSync` fragt nach dem Herunterladen auf die Uhr (`EpisodeDetailViewModel`) und speichert in `WatchEpisode.chapters`.
   - `null` heißt „noch nicht geholt“, eine leere Liste heißt „keine Kapitel“.
   - Fehlen die Kapitel, holt der Player sie einmal pro ViewModel nach.
+- **Fortschrittsring:** Kapitelanfänge sind als kleine Punkte auf dem Ring markiert (`ChapterMarkers` in `WatchPlayerActivity.kt`). Die Punkte haben die Ringfarbe, um 35 % abgedunkelt. Sie sitzen auf der Mitte des Rings, beginnen oben (270°) und laufen im Uhrzeigersinn wie der Fortschritt. Kapitel bei 0 oder nach dem Ende werden nicht markiert. Ist die Kapitelwahl ausgeschaltet, gibt es auch keine Punkte.
 - **Player:** Ein Button öffnet einen `AlertDialog` mit den Kapiteln. Das aktuelle Kapitel ist per `Chapter.getAfterPosition` mit einem Play-Icon markiert. Tippen führt `MediaController.seekTo(start)` aus.
 
 ### 3.5 Grafiken
@@ -155,6 +156,8 @@ Alles ist nur ergänzt; alte Gegenstellen ignorieren unbekannte Pfade.
 9. **Konflikt bei Geschwindigkeit:** Ändert der Nutzer die globale Geschwindigkeit am Phone, bevor das Data Item der Uhr angekommen ist, gewinnt die Uhr („last delivered wins“).
 
 10. **Icons auf der Uhr:** Vektor-Icons mit `android:fillColor="?attr/action_icon_color"` (z. B. `ic_settings`, `ic_check`, `ic_chapter_next`) sind auf der Uhr unsichtbar. Das Theme der Uhr kennt das Attribut nicht, die Füllfarbe wird transparent, und die Tönung von `Icon` übernimmt die Transparenz. Auf der Uhr nur Icons mit fester Farbe verwenden (`*_black`, `*_white`, `ic_notification_*`). Behoben am 2026-10-10: Einstellungen → `ic_settings_white`, Kapitel-Button → `ic_notification_next_chapter`, Markierung der aktuellen Geschwindigkeit → `ic_play_48dp_black`.
+
+11. **Springen in MP3-Dateien:** Viele Podcast-MP3s haben einen Xing-Header ohne Inhaltsverzeichnis oder gar keinen Seek-Header. Mit den Standard-Extraktoren von ExoPlayer sind sie zwar abspielbar, aber nicht durchsuchbar: Jeder Sprung (Kapitel, ±Skip, gespeicherte Position) landet bei 0. Die Phone-App setzt deshalb `DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)` (`ExoPlayerWrapper`). Seit 2026-10-10 macht `WatchPlaybackService` das genauso.
 
 ## 6. Testfälle für Geräte
 

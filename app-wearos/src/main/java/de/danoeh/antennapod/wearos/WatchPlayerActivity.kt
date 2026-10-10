@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.InputDeviceCompat
 import androidx.core.view.MotionEventCompat
@@ -49,6 +54,8 @@ import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.composable.ListItem
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
@@ -144,6 +151,14 @@ fun WatchPlayerScreen(
                 modifier = Modifier.fillMaxSize().padding(2.dp),
                 strokeWidth = 4.dp
             )
+            if (uiState.showChapters) {
+                ChapterMarkers(
+                    chapters = uiState.chapters,
+                    duration = uiState.duration,
+                    strokeWidth = 4.dp,
+                    modifier = Modifier.fillMaxSize().padding(2.dp)
+                )
+            }
         }
         Column(
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -272,5 +287,25 @@ fun WatchPlayerScreen(
         }
     }
 }
+
+@Composable
+private fun ChapterMarkers(chapters: List<Chapter>, duration: Int, strokeWidth: Dp, modifier: Modifier) {
+    val color = lerp(MaterialTheme.colorScheme.primary, Color.Black, CHAPTER_MARKER_DARKEN)
+    Canvas(modifier = modifier) {
+        val radius = size.minDimension / 2 - strokeWidth.toPx() / 2
+        val markerRadius = strokeWidth.toPx() / 3
+        chapters.filter { it.start > 0 && it.start < duration }.forEach { chapter ->
+            val angle = Math.toRadians(CHAPTER_MARKER_START_ANGLE + 360.0 * chapter.start / duration)
+            drawCircle(
+                color = color,
+                radius = markerRadius,
+                center = center + Offset((radius * cos(angle)).toFloat(), (radius * sin(angle)).toFloat())
+            )
+        }
+    }
+}
+
+private const val CHAPTER_MARKER_START_ANGLE = 270.0
+private const val CHAPTER_MARKER_DARKEN = 0.35f
 
 private fun formatSpeed(speed: Float): String = String.format(Locale.getDefault(), "%.2fx", speed)
