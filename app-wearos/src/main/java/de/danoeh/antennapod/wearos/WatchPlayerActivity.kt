@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,6 +31,9 @@ import androidx.core.view.MotionEventCompat
 import androidx.core.view.ViewConfigurationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.itemsIndexed
+import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.FilledTonalIconButton
@@ -37,9 +42,12 @@ import androidx.wear.compose.material3.LevelIndicator
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
+import de.danoeh.antennapod.model.feed.Chapter
 import de.danoeh.antennapod.ui.common.Converter
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
+import de.danoeh.antennapod.wearos.composable.ListItem
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
@@ -71,7 +79,9 @@ class WatchPlayerActivity : ComponentActivity() {
                     onPlayPause = { viewModel.playPause() },
                     onSkipForward = { viewModel.skipForward() },
                     onSkipBackward = { viewModel.skipBackward() },
-                    onNext = { viewModel.next() }
+                    onNext = { viewModel.next() },
+                    onSetPlaybackSpeed = { viewModel.setPlaybackSpeed(it) },
+                    onSeekToChapter = { viewModel.seekToChapter(it) }
                 )
             }
         }
@@ -110,8 +120,13 @@ fun WatchPlayerScreen(
     onPlayPause: () -> Unit,
     onSkipForward: () -> Unit,
     onSkipBackward: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onSetPlaybackSpeed: (Float) -> Unit,
+    onSeekToChapter: (Chapter) -> Unit
 ) {
+    var speedDialogVisible by remember { mutableStateOf(false) }
+    var chapterDialogVisible by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (uiState.isLoading) {
             CircularProgressIndicator()
@@ -189,13 +204,73 @@ fun WatchPlayerScreen(
                     )
                 }
             }
-            FilledTonalIconButton(onClick = onNext, modifier = Modifier.size(36.dp), enabled = uiState.hasNext) {
-                Icon(
-                    painter = painterResource(NotificationsR.drawable.ic_notification_skip),
-                    contentDescription = stringResource(CommonR.string.skip_episode_label),
-                    modifier = Modifier.size(20.dp)
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (uiState.showPlaybackSpeed) {
+                    FilledTonalIconButton(onClick = { speedDialogVisible = true }, modifier = Modifier.size(36.dp)) {
+                        Text(
+                            text = String.format(Locale.getDefault(), "%.2f", uiState.playbackSpeed),
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1
+                        )
+                    }
+                }
+                FilledTonalIconButton(onClick = onNext, modifier = Modifier.size(36.dp), enabled = uiState.hasNext) {
+                    Icon(
+                        painter = painterResource(NotificationsR.drawable.ic_notification_skip),
+                        contentDescription = stringResource(CommonR.string.skip_episode_label),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                if (uiState.showChapters && uiState.chapters.isNotEmpty()) {
+                    FilledTonalIconButton(onClick = { chapterDialogVisible = true }, modifier = Modifier.size(36.dp)) {
+                        Icon(
+                            painter = painterResource(CommonR.drawable.ic_chapter_next),
+                            contentDescription = stringResource(CommonR.string.chapters_label),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
         }
     }
+
+    AlertDialog(
+        visible = speedDialogVisible,
+        onDismissRequest = { speedDialogVisible = false },
+        title = { Text(text = stringResource(CommonR.string.playback_speed)) }
+    ) {
+        items(uiState.playbackSpeeds) { speed ->
+            ListItem(
+                text = formatSpeed(speed),
+                iconRes = CommonR.drawable.ic_check.takeIf { speed == uiState.playbackSpeed },
+                onClick = {
+                    onSetPlaybackSpeed(speed)
+                    speedDialogVisible = false
+                }
+            )
+        }
+    }
+
+    AlertDialog(
+        visible = chapterDialogVisible,
+        onDismissRequest = { chapterDialogVisible = false },
+        title = { Text(text = stringResource(CommonR.string.chapters_label)) }
+    ) {
+        itemsIndexed(uiState.chapters) { index, chapter ->
+            ListItem(
+                text = chapter.title ?: "",
+                iconRes = CommonR.drawable.ic_play_48dp_black.takeIf { index == uiState.currentChapterIndex },
+                secondaryText = Converter.getDurationStringLong(chapter.start.toInt()),
+                onClick = {
+                    onSeekToChapter(chapter)
+                    chapterDialogVisible = false
+                }
+            )
+        }
+    }
 }
+
+private fun formatSpeed(speed: Float): String = String.format(Locale.getDefault(), "%.2fx", speed)

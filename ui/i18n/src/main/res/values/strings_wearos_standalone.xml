@@ -13,4 +13,16 @@
     <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Deleted on phone</string>
     <string name="wearos_move_up" tools:ignore="UnusedResources">Move up</string>
     <string name="wearos_move_down" tools:ignore="UnusedResources">Move down</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi only</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Bluetooth only (from phone)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Prefer Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Prefer Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Use mobile data if no Wi-Fi is available</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menu display</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Show podcast images</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Chapter selection</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Sending episode to watch</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Waiting for phone</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Waiting for connection</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Not downloaded on phone</string>
 </resources>

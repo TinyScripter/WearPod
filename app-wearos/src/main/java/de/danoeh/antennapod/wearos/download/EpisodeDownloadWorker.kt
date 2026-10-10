@@ -22,6 +22,8 @@ import androidx.work.workDataOf
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.BuildConfig
+import de.danoeh.antennapod.wearos.settings.DownloadMode
+import de.danoeh.antennapod.wearos.settings.WatchPreferences
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -40,57 +42,123 @@ import okhttp3.Request
 /**
  * Downloads the media file of a single episode from [WatchEpisodeStore] to the watch.
  * Explicitly requests a Wi-Fi network because Wear OS keeps Wi-Fi turned off while the phone is connected.
+ * Depending on [WatchPreferences], the file is received from the phone instead or mobile data is used.
  */
 class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val itemId = inputData.getLong(KEY_ITEM_ID, -1)
         val episode = WatchEpisodeStore.get(applicationContext, itemId) ?: return Result.failure()
         startForeground(episode)
-        val connectivityManager = applicationContext.getSystemService(ConnectivityManager::class.java)
-        val wifi = CompletableDeferred<Network>()
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                wifi.complete(network)
-            }
-        }
-        val request = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
-        connectivityManager.requestNetwork(request, callback)
+        val downloadMode = WatchPreferences.get(applicationContext).downloadMode
+        val transports = transports(downloadMode, WatchPreferences.canUseMobileData(applicationContext))
+        var failed = false
+        var notOnPhone = false
         try {
-            val network = withTimeoutOrNull(WIFI_TIMEOUT) { wifi.await() }
-            if (network == null && connectivityManager.isActiveNetworkMetered && !BuildConfig.DEBUG) {
-                Log.d(TAG, "No Wi-Fi and the active network is metered")
-                WatchEpisodeStore.update(applicationContext, itemId) {
-                    it.copy(status = DownloadStatus.WAITING_FOR_WIFI)
+            for (transport in transports) {
+                try {
+                    val size = when (transport) {
+                        Transport.BLUETOOTH -> receiveFromPhone(episode)
+                        Transport.WIFI -> withNetwork(NetworkCapabilities.TRANSPORT_WIFI) { download(episode, it) }
+                            ?: downloadWithoutWifi(episode)
+                        Transport.MOBILE -> withNetwork(NetworkCapabilities.TRANSPORT_CELLULAR) {
+                            download(episode, it)
+                        }
+                    } ?: continue
+                    WatchEpisodeStore.update(applicationContext, itemId) {
+                        it.copy(status = DownloadStatus.DOWNLOADED, size = size, failedDownloads = 0)
+                    }
+                    return Result.success()
+                } catch (e: NotOnPhoneException) {
+                    Log.d(TAG, "Episode $itemId is not downloaded on the phone")
+                    notOnPhone = true
+                } catch (e: InsufficientSpaceException) {
+                    throw e
+                } catch (e: IOException) {
+                    if (isStopped) {
+                        throw e
+                    }
+                    Log.e(TAG, "Download of episode $itemId using $transport failed", e)
+                    failed = true
                 }
-                return Result.retry()
             }
-            Log.d(TAG, "Downloading episode $itemId using " + if (network != null) "Wi-Fi" else "the active network")
-            WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.DOWNLOADING) }
-            val size = withContext(Dispatchers.IO) { download(episode, network) }
-            WatchEpisodeStore.update(applicationContext, itemId) {
-                it.copy(status = DownloadStatus.DOWNLOADED, size = size, failedDownloads = 0)
+            if (failed) {
+                return retryOrFail(itemId)
             }
-            return Result.success()
+            if (notOnPhone && downloadMode == DownloadMode.BLUETOOTH_ONLY) {
+                WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.NOT_ON_PHONE) }
+                return Result.failure()
+            }
+            val waitingStatus = when (downloadMode) {
+                DownloadMode.WIFI_ONLY -> DownloadStatus.WAITING_FOR_WIFI
+                DownloadMode.BLUETOOTH_ONLY -> DownloadStatus.WAITING_FOR_PHONE
+                else -> DownloadStatus.WAITING_FOR_CONNECTION
+            }
+            WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = waitingStatus) }
+            return Result.retry()
         } catch (e: InsufficientSpaceException) {
             Log.e(TAG, "Not enough space for episode $itemId", e)
             WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.FAILED) }
             return Result.failure()
         } catch (e: IOException) {
-            if (isStopped) {
-                WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.QUEUED) }
-                return Result.retry()
-            }
-            Log.e(TAG, "Download of episode $itemId failed", e)
-            return retryOrFail(itemId)
+            WatchEpisodeStore.update(applicationContext, itemId) { it.copy(status = DownloadStatus.QUEUED) }
+            return Result.retry()
         } finally {
-            connectivityManager.unregisterNetworkCallback(callback)
             if (WatchEpisodeStore.get(applicationContext, itemId) == null) {
                 WatchEpisodeStore.getFile(applicationContext, episode).delete()
             }
         }
+    }
+
+    private suspend fun <T> withNetwork(transportType: Int, block: (Network) -> T): T? {
+        val connectivityManager = applicationContext.getSystemService(ConnectivityManager::class.java)
+        val available = CompletableDeferred<Network>()
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                available.complete(network)
+            }
+        }
+        val request = NetworkRequest.Builder()
+            .addTransportType(transportType)
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        connectivityManager.requestNetwork(request, callback)
+        try {
+            val network = withTimeoutOrNull(NETWORK_TIMEOUT) { available.await() } ?: return null
+            Log.d(TAG, "Downloading using transport $transportType")
+            WatchEpisodeStore.update(applicationContext, inputData.getLong(KEY_ITEM_ID, -1)) {
+                it.copy(status = DownloadStatus.DOWNLOADING)
+            }
+            return withContext(Dispatchers.IO) { block(network) }
+        } finally {
+            connectivityManager.unregisterNetworkCallback(callback)
+        }
+    }
+
+    private suspend fun downloadWithoutWifi(episode: WatchEpisode): Long? {
+        val connectivityManager = applicationContext.getSystemService(ConnectivityManager::class.java)
+        if (connectivityManager.isActiveNetworkMetered && !BuildConfig.DEBUG) {
+            Log.d(TAG, "No Wi-Fi and the active network is metered")
+            return null
+        }
+        Log.d(TAG, "Downloading episode ${episode.itemId} using the active network")
+        WatchEpisodeStore.update(applicationContext, episode.itemId) { it.copy(status = DownloadStatus.DOWNLOADING) }
+        return withContext(Dispatchers.IO) { download(episode, null) }
+    }
+
+    private suspend fun receiveFromPhone(episode: WatchEpisode): Long? {
+        WatchEpisodeStore.update(applicationContext, episode.itemId) { it.copy(status = DownloadStatus.DOWNLOADING) }
+        return PhoneFileReceiver.receive(
+            applicationContext,
+            episode.itemId,
+            WatchEpisodeStore.getFile(applicationContext, episode),
+            isStopped = { isStopped },
+            checkSpace = { total, missing ->
+                if (!WatchEpisodeStore.hasSpaceFor(applicationContext, episode.itemId, total, missing)) {
+                    throw InsufficientSpaceException()
+                }
+            },
+            onProgress = { WatchEpisodeStore.setProgress(episode.itemId, it) }
+        )
     }
 
     private fun download(episode: WatchEpisode, network: Network?): Long {
@@ -202,7 +270,20 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
         private const val NOTIFICATION_ID_BASE = 1000
         private const val NOTIFICATION_ID_RANGE = 100000
         private const val BACKOFF_MINUTES = 1L
-        private val WIFI_TIMEOUT = 30.seconds
+        private val NETWORK_TIMEOUT = 30.seconds
+
+        /**
+         * Mobile data is only used if no Wi-Fi is available, so it always directly follows Wi-Fi.
+         */
+        fun transports(mode: DownloadMode, useMobileData: Boolean): List<Transport> {
+            val wifi = if (useMobileData) listOf(Transport.WIFI, Transport.MOBILE) else listOf(Transport.WIFI)
+            return when (mode) {
+                DownloadMode.WIFI_ONLY -> wifi
+                DownloadMode.BLUETOOTH_ONLY -> listOf(Transport.BLUETOOTH)
+                DownloadMode.PREFER_WIFI -> wifi + Transport.BLUETOOTH
+                DownloadMode.PREFER_BLUETOOTH -> listOf(Transport.BLUETOOTH) + wifi
+            }
+        }
 
         private fun workName(itemId: Long) = "download_$itemId"
 
@@ -219,5 +300,7 @@ class EpisodeDownloadWorker(context: Context, params: WorkerParameters) : Corout
         }
     }
 }
+
+enum class Transport { WIFI, MOBILE, BLUETOOTH }
 
 private class InsufficientSpaceException : IOException("Not enough space on the watch")

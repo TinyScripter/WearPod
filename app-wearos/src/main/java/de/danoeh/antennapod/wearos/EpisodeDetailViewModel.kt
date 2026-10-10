@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import de.danoeh.antennapod.model.feed.FeedItem
+import de.danoeh.antennapod.model.feed.FeedPreferences
 import de.danoeh.antennapod.net.sync.wearinterface.WearConnectionUtils
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.ui.common.R as CommonR
@@ -16,6 +17,7 @@ import de.danoeh.antennapod.wearos.download.EpisodeDownloadWorker
 import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
+import de.danoeh.antennapod.wearos.sync.ChapterSync
 import de.danoeh.antennapod.wearos.sync.WearDataRepository
 import de.danoeh.antennapod.wearos.sync.WearMessageSender
 import kotlin.time.Duration.Companion.seconds
@@ -137,12 +139,14 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
                 size = media.size,
                 fileName = "${details.id}.$extension",
                 status = DownloadStatus.QUEUED,
-                phoneState = if (details.isPlayed) PhoneState.PLAYED else PhoneState.UNPLAYED
+                phoneState = if (details.isPlayed) PhoneState.PLAYED else PhoneState.UNPLAYED,
+                feedPlaybackSpeed = details.feed?.preferences?.feedPlaybackSpeed ?: FeedPreferences.SPEED_USE_GLOBAL
             )
             withContext(Dispatchers.IO) {
                 WatchEpisodeStore.put(getApplication(), watchEpisode)
                 EpisodeDownloadWorker.enqueue(getApplication(), watchEpisode.itemId)
             }
+            viewModelScope.launch { ChapterSync.syncFromPhone(getApplication(), watchEpisode.itemId) }
         }.invokeOnCompletion {
             _uiState.update { it.copy(isRequestingDownload = false) }
         }

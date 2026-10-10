@@ -19,12 +19,14 @@ import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
+import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.wearos.composable.ListItem
 import de.danoeh.antennapod.wearos.composable.ListScaffold
 import de.danoeh.antennapod.wearos.download.DownloadStatus
 import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
+import de.danoeh.antennapod.wearos.images.rememberWatchImage
 
 class WatchListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +58,11 @@ class WatchListActivity : ComponentActivity() {
 fun downloadStatusText(episode: WatchEpisode, progress: Int): String? = when (episode.status) {
     DownloadStatus.QUEUED -> stringResource(CommonR.string.download_pending)
     DownloadStatus.WAITING_FOR_WIFI -> stringResource(CommonR.string.wearos_waiting_for_wifi)
+    DownloadStatus.WAITING_FOR_PHONE -> stringResource(CommonR.string.wearos_waiting_for_phone)
+    DownloadStatus.WAITING_FOR_CONNECTION -> stringResource(CommonR.string.wearos_waiting_for_connection)
     DownloadStatus.DOWNLOADING -> stringResource(CommonR.string.wearos_downloading, progress)
     DownloadStatus.FAILED -> stringResource(CommonR.string.wearos_download_failed)
+    DownloadStatus.NOT_ON_PHONE -> stringResource(CommonR.string.wearos_not_downloaded_on_phone)
     DownloadStatus.DOWNLOADED -> null
 }
 
@@ -98,6 +103,7 @@ fun WatchListScreen(
                     ?: phoneStateText
                     ?: episode.feedTitle.ifEmpty { null },
                 onLongClick = openMenu,
+                image = rememberWatchImage(WearDataPaths.itemImagePath(episode.itemId)),
                 onClick = {
                     if (episode.status == DownloadStatus.DOWNLOADED) {
                         onPlay(episode.itemId)
@@ -123,7 +129,7 @@ fun WatchListScreen(
         title = { Text(text = menuEpisode?.title ?: "", maxLines = 3, overflow = TextOverflow.Ellipsis) }
     ) {
         val episode = menuEpisode ?: return@AlertDialog
-        if (episode.status == DownloadStatus.FAILED) {
+        if (episode.status.isFailed) {
             item {
                 ListItem(
                     text = stringResource(CommonR.string.retry_label),

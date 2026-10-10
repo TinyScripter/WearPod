@@ -20,6 +20,7 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.WearUnsuitableOutputPlaybackSuppressionResolverListener
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import de.danoeh.antennapod.model.feed.FeedPreferences
 import de.danoeh.antennapod.net.sync.wearinterface.WearPosition
 import de.danoeh.antennapod.net.sync.wearinterface.WearSettings
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
@@ -28,6 +29,7 @@ import de.danoeh.antennapod.wearos.download.DownloadStatus
 import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisode
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
+import de.danoeh.antennapod.wearos.sync.PlaybackSpeedReporter
 import de.danoeh.antennapod.wearos.sync.PositionReporter
 import de.danoeh.antennapod.wearos.sync.WearDataRepository
 import kotlin.time.Duration.Companion.seconds
@@ -54,6 +56,7 @@ class WatchPlaybackService : MediaSessionService() {
     private var smartMarkAsPlayedSecs = WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS
     private var seekBackIncrementMs = WearSettings.DEFAULT_REWIND_SECS * 1000L
     private var seekForwardIncrementMs = WearSettings.DEFAULT_FAST_FORWARD_SECS * 1000L
+    private var globalPlaybackSpeed = WearSettings.DEFAULT_PLAYBACK_SPEED
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -99,6 +102,7 @@ class WatchPlaybackService : MediaSessionService() {
             val itemId = currentItemId ?: return
             val position = WatchEpisodeStore.get(this@WatchPlaybackService, itemId)?.position ?: 0
             startPosition = position
+            applyPlaybackSpeed()
             if (position > 0 && reason != Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) {
                 player.seekTo(position.toLong())
             }
@@ -168,7 +172,20 @@ class WatchPlaybackService : MediaSessionService() {
         smartMarkAsPlayedSecs = settings.smartMarkAsPlayedSecs
         seekBackIncrementMs = settings.rewindSecs.coerceAtLeast(1) * 1000L
         seekForwardIncrementMs = settings.fastForwardSecs.coerceAtLeast(1) * 1000L
-        player.setPlaybackSpeed(settings.playbackSpeed)
+        globalPlaybackSpeed = settings.playbackSpeed
+        applyPlaybackSpeed()
+    }
+
+    private fun applyPlaybackSpeed() {
+        val itemId = player.currentMediaItem?.mediaId?.toLongOrNull()
+        val feedSpeed = itemId?.let { WatchEpisodeStore.get(this, it)?.feedPlaybackSpeed }
+            ?.takeIf { it != FeedPreferences.SPEED_USE_GLOBAL }
+        val speed = itemId?.let { WatchSettingsStore.getTemporarySpeed(this, it) }
+            ?: feedSpeed
+            ?: globalPlaybackSpeed
+        if (speed > 0) {
+            player.setPlaybackSpeed(speed)
+        }
     }
 
     private fun seekBy(offsetMs: Long) {
@@ -209,6 +226,14 @@ class WatchPlaybackService : MediaSessionService() {
             override fun seekBack() = seekBy(-seekBackIncrementMs)
 
             override fun seekForward() = seekBy(seekForwardIncrementMs)
+
+            override fun setPlaybackSpeed(speed: Float) {
+                super.setPlaybackSpeed(speed)
+                val itemId = player.currentMediaItem?.mediaId?.toLongOrNull() ?: return
+                globalPlaybackSpeed = speed
+                WatchSettingsStore.setPlaybackSpeed(this@WatchPlaybackService, itemId, speed)
+                ioScope.launch { PlaybackSpeedReporter.report(applicationContext, speed) }
+            }
         }
         mediaSession = MediaSession.Builder(this, sessionPlayer)
             .setCallback(sessionCallback)

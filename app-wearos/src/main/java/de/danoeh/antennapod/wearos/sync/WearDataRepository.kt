@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.wearos.sync
 
+import de.danoeh.antennapod.model.feed.Chapter
 import de.danoeh.antennapod.model.feed.Feed
 import de.danoeh.antennapod.model.feed.FeedItem
 import de.danoeh.antennapod.net.sync.wearinterface.WearNowPlaying
@@ -26,6 +27,9 @@ object WearDataRepository {
     private val _episodeDetails = MutableStateFlow<Map<Long, FeedItem>>(emptyMap())
     val episodeDetails: StateFlow<Map<Long, FeedItem>> = _episodeDetails
 
+    private val _chapters = MutableStateFlow<Map<Long, List<Chapter>>>(emptyMap())
+    val chapters: StateFlow<Map<Long, List<Chapter>>> = _chapters
+
     private val _settings = MutableStateFlow<WearSettings?>(null)
     val settings: StateFlow<WearSettings?> = _settings
 
@@ -47,6 +51,10 @@ object WearDataRepository {
 
     fun updateEpisodeDetails(item: FeedItem) {
         _episodeDetails.update { it + (item.id to item) }
+    }
+
+    fun updateChapters(itemId: Long, chapters: List<Chapter>) {
+        _chapters.update { it + (itemId to chapters) }
     }
 
     fun updateSettings(settings: WearSettings?) {

@@ -60,6 +60,11 @@
             android:taskAffinity=".wearos" />
 
         <activity
+            android:name="de.danoeh.antennapod.wearos.WatchSettingsActivity"
+            android:exported="false"
+            android:taskAffinity=".wearos" />
+
+        <activity
             android:name="de.danoeh.antennapod.wearos.WatchPlayerActivity"
             android:exported="false"
             android:launchMode="singleTop"

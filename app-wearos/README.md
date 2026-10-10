@@ -20,12 +20,24 @@ Use this to trigger actions (playback control) or to request data (the phone the
 
 `WatchEpisodeStore` is a singleton holding the episodes that were selected for playback on the watch.
 The list is persisted as a JSON file in the app's files directory, so it is available without the phone.
-`EpisodeDownloadWorker` downloads the media file of one episode directly from its original URL to `files/episodes`.
-It requests a Wi-Fi network first and refuses to download over metered networks (except in debug builds, as the emulator only has a metered network).
-Without Wi-Fi, the episode is marked as waiting for Wi-Fi and the worker retries with a linear backoff, without ever giving up.
+`EpisodeDownloadWorker` gets the media file of one episode to `files/episodes`.
+The download mode in the settings of the watch (`WatchPreferences`) defines which ways are tried, in this order:
+
+| Mode | Order |
+|---|---|
+| Wi-Fi only | Wi-Fi |
+| Bluetooth only (from phone) | Phone |
+| Prefer Wi-Fi | Wi-Fi, phone |
+| Prefer Bluetooth | Phone, Wi-Fi |
+
+Wi-Fi downloads the file directly from its original URL. The worker requests a Wi-Fi network and refuses to download over metered networks (except in debug builds, as the emulator only has a metered network).
+If the watch has mobile data and it is enabled in the settings, mobile data is tried directly after Wi-Fi.
+"Phone" means that `PhoneFileReceiver` asks the phone for the file it already downloaded. The phone (`WearFileTransferWorker`) sends it over a `ChannelClient` channel, which works for podcasts with a password, too.
+If the episode is not downloaded on the phone, it cannot be transferred. With "Bluetooth only" the download then fails with "Not downloaded on phone".
+If no way is available, the episode is marked as waiting (for Wi-Fi, for the phone or for a connection) and the worker retries with a linear backoff, without ever giving up.
 The worker runs as a foreground service with a notification, so long downloads are not stopped after 10 minutes.
 This only works if the system allows starting a foreground service at that moment (usually when the download was started from the app), otherwise it downloads without a notification.
-Interrupted downloads continue where they stopped using HTTP range requests.
+Interrupted downloads continue where they stopped using HTTP range requests, or by telling the phone the offset to continue at.
 Only real download errors count as failed attempts (`WatchEpisode.failedDownloads`), the download fails after the third retry.
 Episodes are limited to 1 GB in total, and at least 100 MB of the storage of the watch stay free.
 The free space is checked before the download using the size from the phone and again using the `Content-Length` of the server.
@@ -40,6 +52,17 @@ Skipping to the next episode within the "smart mark as played" time before the e
 Skip amounts, playback speed and the smart mark as played time are taken from the settings last received from the phone, persisted in `WatchSettingsStore`.
 New settings from the phone are applied to the running service immediately. The media session uses a `ForwardingPlayer` for this, because the skip amounts of ExoPlayer cannot be changed after it was built.
 `WatchPlayerViewModel` connects to the service using a `MediaController` and only polls the playback position while the player screen is visible.
+
+The playback speed is chosen like on the phone: a speed changed for the current episode, otherwise the speed of the podcast, otherwise the global speed.
+Changing the speed on the watch also changes the global speed. It is reported to the phone using the data item `WATCH_PLAYBACK_SPEED` and kept as pending in `WatchSettingsStore` until the phone reports the same speed.
+The chapters of an episode are requested from the phone (`ChapterSync`) when it is downloaded to the watch, or later when the player shows an episode without chapters. They are stored with the episode.
+The buttons for the playback speed and the chapters are only shown if they are enabled in the settings of the watch.
+
+## Settings and Images
+
+`WatchSettingsActivity` shows the settings that are only made on the watch, stored in `WatchPreferences`: download mode, mobile data (only on watches with mobile data), podcast images, playback speed button and chapter selection.
+`WatchImageLoader` requests small podcast and episode images from the phone, caches them in memory and in `files/images` and refreshes them after 7 days.
+The images are shown in all lists and on the episode details, but not in the player.
 
 ## Synchronizing Playback Positions
 

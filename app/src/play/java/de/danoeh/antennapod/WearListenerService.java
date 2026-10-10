@@ -28,10 +28,12 @@ import de.danoeh.antennapod.net.sync.wearinterface.WearSerializer;
 import de.danoeh.antennapod.net.sync.wearinterface.WearSettings;
 import de.danoeh.antennapod.playback.service.PlaybackServiceStarter;
 import de.danoeh.antennapod.storage.database.DBReader;
+import de.danoeh.antennapod.ui.chapters.ChapterUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +86,16 @@ public class WearListenerService extends WearableListenerService {
     public void onDataChanged(DataEventBuffer dataEvents) {
         for (DataEvent event : dataEvents) {
             Uri uri = event.getDataItem().getUri();
+            if (event.getType() == DataEvent.TYPE_CHANGED
+                    && WearDataPaths.WATCH_PLAYBACK_SPEED.equals(uri.getPath())) {
+                float speed = WearSerializer.playbackSpeedFromBytes(event.getDataItem().getData());
+                Log.d(TAG, "Playback speed received: " + speed);
+                if (speed > 0) {
+                    UserPreferences.setPlaybackSpeed(speed);
+                }
+                Wearable.getDataClient(this).deleteDataItems(uri);
+                continue;
+            }
             if (event.getType() != DataEvent.TYPE_CHANGED || uri.getPath() == null
                     || !uri.getPath().startsWith(WearDataPaths.WATCH_POSITION_PREFIX)) {
                 continue;
@@ -150,7 +162,8 @@ public class WearListenerService extends WearableListenerService {
             case WearDataPaths.SETTINGS:
                 reply(sourceNodeId, path, WearSerializer.settingsToBytes(new WearSettings(
                         UserPreferences.getRewindSecs(), UserPreferences.getFastForwardSecs(),
-                        UserPreferences.getSmartMarkAsPlayedSecs(), UserPreferences.getPlaybackSpeed())));
+                        UserPreferences.getSmartMarkAsPlayedSecs(), UserPreferences.getPlaybackSpeed(),
+                        UserPreferences.getPlaybackSpeedArray())));
                 break;
             case WearDataPaths.POSITIONS:
                 List<FeedItem> positionItems = new ArrayList<>();
@@ -190,6 +203,42 @@ public class WearListenerService extends WearableListenerService {
                         reply(sourceNodeId, path, WearSerializer.episodeDetailsToBytes(item));
                     } catch (NumberFormatException e) {
                         Log.w(TAG, "Ignoring malformed episode details path: " + path, e);
+                    }
+                } else if (path.startsWith(WearDataPaths.FEED_IMAGE_PREFIX)) {
+                    try {
+                        long feedId = Long.parseLong(path.substring(WearDataPaths.FEED_IMAGE_PREFIX.length()));
+                        reply(sourceNodeId, path, WearImageLoader.loadFeedImage(this, feedId));
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Ignoring malformed feed image path: " + path, e);
+                    }
+                } else if (path.startsWith(WearDataPaths.ITEM_IMAGE_PREFIX)) {
+                    try {
+                        long itemId = Long.parseLong(path.substring(WearDataPaths.ITEM_IMAGE_PREFIX.length()));
+                        reply(sourceNodeId, path, WearImageLoader.loadItemImage(this, itemId));
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Ignoring malformed item image path: " + path, e);
+                    }
+                } else if (path.startsWith(WearDataPaths.CHAPTERS_PREFIX)) {
+                    try {
+                        long itemId = Long.parseLong(path.substring(WearDataPaths.CHAPTERS_PREFIX.length()));
+                        FeedItem chapterItem = DBReader.getFeedItem(itemId);
+                        if (chapterItem == null || chapterItem.getMedia() == null) {
+                            reply(sourceNodeId, path, WearSerializer.chaptersToBytes(null));
+                            return;
+                        }
+                        ChapterUtils.loadChapters(chapterItem.getMedia(), this, false);
+                        reply(sourceNodeId, path, WearSerializer.chaptersToBytes(chapterItem.getMedia().getChapters()));
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Ignoring malformed chapters path: " + path, e);
+                    }
+                } else if (path.startsWith(WearDataPaths.EPISODE_FILE_PREFIX)) {
+                    try {
+                        long itemId = Long.parseLong(path.substring(WearDataPaths.EPISODE_FILE_PREFIX.length()));
+                        long offset = data != null && data.length > 0
+                                ? Long.parseLong(new String(data, StandardCharsets.UTF_8)) : 0;
+                        WearFileTransferWorker.enqueue(this, sourceNodeId, itemId, offset);
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Ignoring malformed episode file path: " + path, e);
                     }
                 } else if (path.startsWith(WearDataPaths.OPEN_ON_PHONE_PREFIX)) {
                     try {

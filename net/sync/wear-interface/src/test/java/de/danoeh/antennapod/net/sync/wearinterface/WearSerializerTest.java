@@ -1,8 +1,11 @@
 package de.danoeh.antennapod.net.sync.wearinterface;
 
+import de.danoeh.antennapod.model.feed.Chapter;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedMedia;
+import de.danoeh.antennapod.model.feed.FeedPreferences;
+import de.danoeh.antennapod.model.feed.VolumeAdaptionSetting;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -154,6 +157,25 @@ public class WearSerializerTest {
     }
 
     @Test
+    public void testEpisodeDetailsFeedPlaybackSpeed() {
+        Feed feed = new Feed(null, null);
+        feed.setTitle("Test Feed");
+        FeedPreferences preferences = new FeedPreferences(0, FeedPreferences.AutoDownloadSetting.GLOBAL,
+                FeedPreferences.AutoDeleteAction.GLOBAL, VolumeAdaptionSetting.OFF,
+                FeedPreferences.NewEpisodesAction.GLOBAL, null, null);
+        preferences.setFeedPlaybackSpeed(1.4f);
+        feed.setPreferences(preferences);
+        FeedItem item = new FeedItem();
+        item.setId(6L);
+        item.setFeed(feed);
+
+        FeedItem result = WearSerializer.episodeDetailsFromBytes(WearSerializer.episodeDetailsToBytes(item));
+
+        assertTrue(result != null);
+        assertEquals(1.4f, result.getFeed().getPreferences().getFeedPlaybackSpeed(), 0.001f);
+    }
+
+    @Test
     public void testEpisodeDetailsFromBytesEmpty() {
         assertNull(WearSerializer.episodeDetailsFromBytes(new byte[0]));
     }
@@ -217,6 +239,37 @@ public class WearSerializerTest {
         assertEquals(30, result.fastForwardSecs);
         assertEquals(45, result.smartMarkAsPlayedSecs);
         assertEquals(1.5f, result.playbackSpeed, 0.001f);
+    }
+
+    @Test
+    public void testSettingsPlaybackSpeedsRoundTrip() {
+        WearSettings settings = new WearSettings(20, 30, 45, 1.5f, Arrays.asList(0.8f, 1.6f));
+
+        WearSettings result = WearSerializer.settingsFromBytes(WearSerializer.settingsToBytes(settings));
+
+        assertTrue(result != null);
+        assertEquals(Arrays.asList(0.8f, 1.6f), result.playbackSpeeds);
+    }
+
+    @Test
+    public void testPlaybackSpeedRoundTrip() {
+        assertEquals(1.75f, WearSerializer.playbackSpeedFromBytes(WearSerializer.playbackSpeedToBytes(1.75f)), 0.001f);
+        assertEquals(FeedPreferences.SPEED_USE_GLOBAL, WearSerializer.playbackSpeedFromBytes(new byte[0]), 0.001f);
+    }
+
+    @Test
+    public void testChaptersRoundTrip() {
+        List<Chapter> chapters = Arrays.asList(new Chapter(0, "Intro", "https://example.com", null),
+                new Chapter(90000, null, null, null));
+
+        List<Chapter> result = WearSerializer.chaptersFromBytes(WearSerializer.chaptersToBytes(chapters));
+
+        assertEquals(2, result.size());
+        assertEquals(0, result.get(0).getStart());
+        assertEquals("Intro", result.get(0).getTitle());
+        assertEquals(90000, result.get(1).getStart());
+        assertEquals("", result.get(1).getTitle());
+        assertTrue(WearSerializer.chaptersFromBytes(WearSerializer.chaptersToBytes(null)).isEmpty());
     }
 
     @Test

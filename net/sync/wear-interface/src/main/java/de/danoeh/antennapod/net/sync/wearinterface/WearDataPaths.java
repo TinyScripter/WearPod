@@ -16,6 +16,11 @@ public final class WearDataPaths {
     public static final String POSITIONS = "/positions";
     public static final String SETTINGS = "/settings";
     public static final String WATCH_POSITION_PREFIX = "/watch_position/";
+    public static final String EPISODE_FILE_PREFIX = "/episode_file/";
+    public static final String WATCH_PLAYBACK_SPEED = "/watch_playback_speed";
+    public static final String CHAPTERS_PREFIX = "/chapters/";
+    public static final String FEED_IMAGE_PREFIX = "/image/feed/";
+    public static final String ITEM_IMAGE_PREFIX = "/image/item/";
 
     public static String playPath(long itemId) {
         return PLAY_PREFIX + itemId;
@@ -35,6 +40,22 @@ public final class WearDataPaths {
 
     public static String watchPositionPath(long itemId) {
         return WATCH_POSITION_PREFIX + itemId;
+    }
+
+    public static String episodeFilePath(long itemId) {
+        return EPISODE_FILE_PREFIX + itemId;
+    }
+
+    public static String chaptersPath(long itemId) {
+        return CHAPTERS_PREFIX + itemId;
+    }
+
+    public static String feedImagePath(long feedId) {
+        return FEED_IMAGE_PREFIX + feedId;
+    }
+
+    public static String itemImagePath(long itemId) {
+        return ITEM_IMAGE_PREFIX + itemId;
     }
 
     private WearDataPaths() {

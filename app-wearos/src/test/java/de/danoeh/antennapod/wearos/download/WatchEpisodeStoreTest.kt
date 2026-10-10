@@ -2,6 +2,7 @@ package de.danoeh.antennapod.wearos.download
 
 import android.content.Context
 import android.os.Build
+import de.danoeh.antennapod.model.feed.Chapter
 import de.danoeh.antennapod.model.feed.FeedItem
 import java.io.File
 import org.json.JSONArray
@@ -48,6 +49,26 @@ class WatchEpisodeStoreTest {
         val episode = episode(1).copy(phoneState = PhoneState.PLAYED, failedDownloads = 2)
 
         assertEquals(episode, WatchEpisode.fromJson(episode.toJson()))
+    }
+
+    @Test
+    fun testJsonRoundTripWithSpeedAndChapters() {
+        val episode = episode(1).copy(
+            status = DownloadStatus.NOT_ON_PHONE,
+            feedPlaybackSpeed = 1.3f,
+            chapters = listOf(Chapter(0, "Intro", null, null), Chapter(90000, "Main", null, null))
+        )
+
+        val result = WatchEpisode.fromJson(episode.toJson())
+
+        assertEquals(episode.copy(chapters = null), result.copy(chapters = null))
+        assertEquals(listOf(0L, 90000L), result.chapters?.map { it.start })
+        assertEquals(listOf("Intro", "Main"), result.chapters?.map { it.title })
+    }
+
+    @Test
+    fun testJsonRoundTripWithoutChapters() {
+        assertNull(WatchEpisode.fromJson(episode(1).toJson()).chapters)
     }
 
     @Test

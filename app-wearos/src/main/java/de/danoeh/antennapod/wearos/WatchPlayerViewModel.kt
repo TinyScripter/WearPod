@@ -13,11 +13,16 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import de.danoeh.antennapod.model.feed.Chapter
 import de.danoeh.antennapod.wearos.download.DownloadStatus
 import de.danoeh.antennapod.wearos.download.PhoneState
 import de.danoeh.antennapod.wearos.download.WatchEpisodeStore
 import de.danoeh.antennapod.wearos.playback.WatchPlaybackService
+import de.danoeh.antennapod.wearos.playback.WatchSettingsStore
+import de.danoeh.antennapod.wearos.settings.WatchPreferences
+import de.danoeh.antennapod.wearos.sync.ChapterSync
 import de.danoeh.antennapod.wearos.sync.PositionSync
+import de.danoeh.antennapod.wearos.sync.WearDataRepository
 import java.util.concurrent.ExecutionException
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
@@ -25,6 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -36,7 +42,13 @@ data class WatchPlayerUiState(
     val isPlaying: Boolean = false,
     val hasNext: Boolean = false,
     val isLoading: Boolean = false,
-    val hasError: Boolean = false
+    val hasError: Boolean = false,
+    val showPlaybackSpeed: Boolean = false,
+    val playbackSpeed: Float = 1.0f,
+    val playbackSpeeds: List<Float> = emptyList(),
+    val showChapters: Boolean = false,
+    val chapters: List<Chapter> = emptyList(),
+    val currentChapterIndex: Int = -1
 )
 
 class WatchPlayerViewModel(application: Application, private val itemId: Long) : AndroidViewModel(application) {
@@ -49,6 +61,8 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
         SessionToken(application, ComponentName(application, WatchPlaybackService::class.java))
     ).buildAsync()
     private var controller: MediaController? = null
+    private var playbackSpeeds = WatchSettingsStore.load(application).playbackSpeeds
+    private val chapterRequests = mutableSetOf<Long>()
 
     init {
         controllerFuture.addListener({
@@ -70,6 +84,17 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
                 _uiState.value = WatchPlayerUiState()
             }
         }, ContextCompat.getMainExecutor(application))
+
+        viewModelScope.launch {
+            WearDataRepository.settings.filterNotNull().collect {
+                playbackSpeeds = it.playbackSpeeds
+                updateState()
+            }
+        }
+
+        viewModelScope.launch {
+            WatchPreferences.observe(application).collect { updateState() }
+        }
 
         viewModelScope.launch {
             _uiState.subscriptionCount.map { it > 0 }.distinctUntilChanged().collectLatest { isVisible ->
@@ -110,15 +135,30 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
 
     private fun updateState() {
         val controller = controller ?: return
+        val preferences = WatchPreferences.get(getApplication())
+        val currentItemId = controller.currentMediaItem?.mediaId?.toLongOrNull()
+        val chapters = currentItemId?.let { WatchEpisodeStore.get(getApplication(), it) }?.chapters
+        if (preferences.showChapters && currentItemId != null && chapters == null &&
+            chapterRequests.add(currentItemId)
+        ) {
+            viewModelScope.launch { ChapterSync.syncFromPhone(getApplication(), currentItemId) }
+        }
+        val position = controller.currentPosition.toInt()
         _uiState.value = WatchPlayerUiState(
             title = controller.mediaMetadata.title?.toString() ?: "",
             feedTitle = controller.mediaMetadata.artist?.toString() ?: "",
-            position = controller.currentPosition.toInt(),
+            position = position,
             duration = controller.duration.coerceAtLeast(0).toInt(),
             isPlaying = controller.isPlaying,
             hasNext = controller.hasNextMediaItem(),
             isLoading = isStarting,
-            hasError = controller.playerError != null
+            hasError = controller.playerError != null,
+            showPlaybackSpeed = preferences.showPlaybackSpeed,
+            playbackSpeed = controller.playbackParameters.speed,
+            playbackSpeeds = playbackSpeeds,
+            showChapters = preferences.showChapters,
+            chapters = chapters.orEmpty(),
+            currentChapterIndex = Chapter.getAfterPosition(chapters, position)
         )
     }
 
@@ -141,6 +181,14 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
 
     fun next() {
         controller?.seekToNextMediaItem()
+    }
+
+    fun setPlaybackSpeed(speed: Float) {
+        controller?.setPlaybackSpeed(speed)
+    }
+
+    fun seekToChapter(chapter: Chapter) {
+        controller?.seekTo(chapter.start)
     }
 
     override fun onCleared() {

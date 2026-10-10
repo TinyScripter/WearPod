@@ -2,8 +2,11 @@ package de.danoeh.antennapod.net.sync.wearinterface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.danoeh.antennapod.model.feed.Chapter;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
+import de.danoeh.antennapod.model.feed.FeedPreferences;
+import de.danoeh.antennapod.model.feed.VolumeAdaptionSetting;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +39,10 @@ public final class WearSerializer {
     private static final String KEY_START_POSITION = "start_position";
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final String KEY_COMPLETED = "completed";
+    private static final String KEY_PLAYBACK_SPEEDS = "playback_speeds";
+    private static final String KEY_FEED_PLAYBACK_SPEED = "feed_playback_speed";
+    private static final String KEY_START = "start";
+    private static final int MAX_CHAPTERS = 500;
 
     private WearSerializer() {
     }
@@ -78,6 +85,14 @@ public final class WearSerializer {
         if (feedTitle != null) {
             Feed feed = new Feed(null, null);
             feed.setTitle(feedTitle);
+            if (obj.has(KEY_FEED_PLAYBACK_SPEED)) {
+                FeedPreferences preferences = new FeedPreferences(0, FeedPreferences.AutoDownloadSetting.GLOBAL,
+                        FeedPreferences.AutoDeleteAction.GLOBAL, VolumeAdaptionSetting.OFF,
+                        FeedPreferences.NewEpisodesAction.GLOBAL, null, null);
+                preferences.setFeedPlaybackSpeed((float) obj.optDouble(KEY_FEED_PLAYBACK_SPEED,
+                        FeedPreferences.SPEED_USE_GLOBAL));
+                feed.setPreferences(preferences);
+            }
             item.setFeed(feed);
         }
         return item;
@@ -127,6 +142,9 @@ public final class WearSerializer {
             obj.put(KEY_GUID, item.getItemIdentifier());
             if (item.getFeed() != null) {
                 obj.put(KEY_FEED_TITLE, item.getFeed().getTitle());
+                if (item.getFeed().getPreferences() != null) {
+                    obj.put(KEY_FEED_PLAYBACK_SPEED, item.getFeed().getPreferences().getFeedPlaybackSpeed());
+                }
             }
             FeedMedia media = item.getMedia();
             if (media != null) {
@@ -199,6 +217,11 @@ public final class WearSerializer {
             obj.put(KEY_FAST_FORWARD_SECS, settings.fastForwardSecs);
             obj.put(KEY_SMART_MARK_AS_PLAYED_SECS, settings.smartMarkAsPlayedSecs);
             obj.put(KEY_PLAYBACK_SPEED, settings.playbackSpeed);
+            JSONArray speeds = new JSONArray();
+            for (float speed : settings.playbackSpeeds) {
+                speeds.put(speed);
+            }
+            obj.put(KEY_PLAYBACK_SPEEDS, speeds);
             return obj.toString().getBytes(StandardCharsets.UTF_8);
         } catch (JSONException e) {
             return new byte[0];
@@ -212,11 +235,20 @@ public final class WearSerializer {
         }
         try {
             JSONObject obj = new JSONObject(new String(data, StandardCharsets.UTF_8));
+            List<Float> speeds = WearSettings.DEFAULT_PLAYBACK_SPEEDS;
+            JSONArray speedsArray = obj.optJSONArray(KEY_PLAYBACK_SPEEDS);
+            if (speedsArray != null && speedsArray.length() > 0) {
+                speeds = new ArrayList<>();
+                for (int i = 0; i < speedsArray.length(); i++) {
+                    speeds.add((float) speedsArray.getDouble(i));
+                }
+            }
             return new WearSettings(
                     obj.optInt(KEY_REWIND_SECS, WearSettings.DEFAULT_REWIND_SECS),
                     obj.optInt(KEY_FAST_FORWARD_SECS, WearSettings.DEFAULT_FAST_FORWARD_SECS),
                     obj.optInt(KEY_SMART_MARK_AS_PLAYED_SECS, WearSettings.DEFAULT_SMART_MARK_AS_PLAYED_SECS),
-                    (float) obj.optDouble(KEY_PLAYBACK_SPEED, WearSettings.DEFAULT_PLAYBACK_SPEED));
+                    (float) obj.optDouble(KEY_PLAYBACK_SPEED, WearSettings.DEFAULT_PLAYBACK_SPEED),
+                    speeds);
         } catch (JSONException e) {
             return null;
         }
@@ -259,6 +291,66 @@ public final class WearSerializer {
         } catch (JSONException e) {
             return null;
         }
+    }
+
+    @NonNull
+    public static byte[] playbackSpeedToBytes(float speed) {
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put(KEY_PLAYBACK_SPEED, speed);
+            obj.put(KEY_TIMESTAMP, System.currentTimeMillis());
+            return obj.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e) {
+            return new byte[0];
+        }
+    }
+
+    public static float playbackSpeedFromBytes(@Nullable byte[] data) {
+        if (data == null || data.length == 0) {
+            return FeedPreferences.SPEED_USE_GLOBAL;
+        }
+        try {
+            JSONObject obj = new JSONObject(new String(data, StandardCharsets.UTF_8));
+            return (float) obj.optDouble(KEY_PLAYBACK_SPEED, FeedPreferences.SPEED_USE_GLOBAL);
+        } catch (JSONException e) {
+            return FeedPreferences.SPEED_USE_GLOBAL;
+        }
+    }
+
+    @NonNull
+    public static byte[] chaptersToBytes(@Nullable List<Chapter> chapters) {
+        JSONArray array = new JSONArray();
+        if (chapters != null) {
+            for (Chapter chapter : chapters.subList(0, Math.min(chapters.size(), MAX_CHAPTERS))) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put(KEY_START, chapter.getStart());
+                    obj.put(KEY_TITLE, chapter.getTitle() != null ? chapter.getTitle() : "");
+                    array.put(obj);
+                } catch (JSONException e) {
+                    // skip malformed chapter
+                }
+            }
+        }
+        return array.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @NonNull
+    public static List<Chapter> chaptersFromBytes(@Nullable byte[] data) {
+        List<Chapter> chapters = new ArrayList<>();
+        if (data == null || data.length == 0) {
+            return chapters;
+        }
+        try {
+            JSONArray array = new JSONArray(new String(data, StandardCharsets.UTF_8));
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                chapters.add(new Chapter(obj.optLong(KEY_START, 0), obj.optString(KEY_TITLE, ""), null, null));
+            }
+        } catch (JSONException e) {
+            // return whatever we managed to parse
+        }
+        return chapters;
     }
 
     @NonNull

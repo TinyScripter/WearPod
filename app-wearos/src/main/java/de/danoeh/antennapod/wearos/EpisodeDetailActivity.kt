@@ -3,6 +3,7 @@ package de.danoeh.antennapod.wearos
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,12 +47,14 @@ import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.model.feed.FeedItem
+import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.ui.common.Converter
 import de.danoeh.antennapod.ui.common.DateFormatter
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.ui.notifications.R as NotificationsR
 import de.danoeh.antennapod.wearos.composable.ListItem
 import de.danoeh.antennapod.wearos.download.DownloadStatus
+import de.danoeh.antennapod.wearos.images.rememberWatchImage
 
 class EpisodeDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +111,18 @@ fun EpisodeDetailScreen(
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 32.dp),
             autoCentering = null
         ) {
+            item {
+                val image = rememberWatchImage(WearDataPaths.itemImagePath(item.id))
+                if (image != null) {
+                    Image(
+                        bitmap = image,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp).clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
             item {
                 val dateStr = DateFormatter.formatAbbrev(LocalContext.current, item.getPubDate())
                 Text(
@@ -229,7 +247,7 @@ fun EpisodeDetailScreen(
 
             val watchEpisode = uiState.watchEpisode
             val watchStatus = watchEpisode?.status
-            if (uiState.canDownloadToWatch && (watchStatus == null || watchStatus == DownloadStatus.FAILED)) {
+            if (uiState.canDownloadToWatch && (watchStatus == null || watchStatus.isFailed)) {
                 item {
                     ListItem(
                         text = stringResource(CommonR.string.wearos_download_to_watch),
@@ -249,7 +267,7 @@ fun EpisodeDetailScreen(
                     ListItem(
                         text = stringResource(CommonR.string.wearos_remove_from_watch),
                         secondaryText = downloadStatusText(watchEpisode, uiState.downloadProgress)
-                            .takeIf { watchStatus != DownloadStatus.FAILED },
+                            .takeIf { !watchEpisode.status.isFailed },
                         onClick = onRemoveFromWatch
                     )
                 }
