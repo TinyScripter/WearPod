@@ -113,7 +113,7 @@ fun MainListScreen(
             item {
                 ListItem(
                     text = stringResource(CommonR.string.settings_label),
-                    iconRes = CommonR.drawable.ic_settings,
+                    iconRes = CommonR.drawable.ic_settings_white,
                     onClick = onOpenSettings
                 )
             }

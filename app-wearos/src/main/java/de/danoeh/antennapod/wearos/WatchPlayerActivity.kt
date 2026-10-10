@@ -227,7 +227,7 @@ fun WatchPlayerScreen(
                 if (uiState.showChapters && uiState.chapters.isNotEmpty()) {
                     FilledTonalIconButton(onClick = { chapterDialogVisible = true }, modifier = Modifier.size(36.dp)) {
                         Icon(
-                            painter = painterResource(CommonR.drawable.ic_chapter_next),
+                            painter = painterResource(NotificationsR.drawable.ic_notification_next_chapter),
                             contentDescription = stringResource(CommonR.string.chapters_label),
                             modifier = Modifier.size(20.dp)
                         )
@@ -245,7 +245,7 @@ fun WatchPlayerScreen(
         items(uiState.playbackSpeeds) { speed ->
             ListItem(
                 text = formatSpeed(speed),
-                iconRes = CommonR.drawable.ic_check.takeIf { speed == uiState.playbackSpeed },
+                iconRes = CommonR.drawable.ic_play_48dp_black.takeIf { speed == uiState.playbackSpeed },
                 onClick = {
                     onSetPlaybackSpeed(speed)
                     speedDialogVisible = false
