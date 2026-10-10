@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">వాచ్‌లో</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">రిమోట్ ప్లే</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">వాచ్‌కు డౌన్‌లోడ్ చేయండి</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">వాచ్ నుండి తీసివేయండి</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">డౌన్‌లోడ్ అవుతోంది (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">డౌన్‌లోడ్ విఫలమైంది</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi కోసం వేచి ఉంది</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">మీడియా ఫైల్‌ను ప్లే చేయడం సాధ్యపడలేదు</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">ఫోన్‌లో తొలగించబడింది</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">పైకి తరలించండి</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">కిందికి తరలించండి</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi మాత్రమే</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">బ్లూటూత్ మాత్రమే (ఫోన్ నుండి)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fiకి ప్రాధాన్యత ఇవ్వండి</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">బ్లూటూత్‌కు ప్రాధాన్యత ఇవ్వండి</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi లేకపోతే మొబైల్ డేటాను ఉపయోగించండి</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">మెనూ ప్రదర్శన</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">పాడ్‌కాస్ట్ చిత్రాలను చూపించు</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">చాప్టర్ ఎంపిక</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">ఎపిసోడ్‌ను వాచ్‌కు పంపుతోంది</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">ఫోన్ కోసం వేచి ఉంది</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">కనెక్షన్ కోసం వేచి ఉంది</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">ఫోన్‌లో డౌన్‌లోడ్ కాలేదు</string>
+</resources>

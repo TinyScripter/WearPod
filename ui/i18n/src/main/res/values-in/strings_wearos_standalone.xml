@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Di jam tangan</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Putar jarak jauh</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Unduh ke jam tangan</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Hapus dari jam tangan</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Mengunduh (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Unduhan gagal</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Menunggu Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">File media tidak dapat diputar</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Dihapus di ponsel</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Pindah ke atas</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Pindah ke bawah</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Hanya Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Hanya Bluetooth (dari ponsel)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Utamakan Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Utamakan Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Gunakan data seluler jika tidak ada Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Tampilan menu</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Tampilkan gambar podcast</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Pilihan bab</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Mengirim episode ke jam tangan</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Menunggu ponsel</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Menunggu koneksi</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Belum diunduh di ponsel</string>
+</resources>

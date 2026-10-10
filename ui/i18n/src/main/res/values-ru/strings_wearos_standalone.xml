@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">На часах</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Удалённое воспроизведение</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Скачать на часы</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Удалить с часов</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Скачивание (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Ошибка скачивания</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Ожидание Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Не удалось воспроизвести медиафайл</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Удалено на телефоне</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Переместить вверх</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Переместить вниз</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Только Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Только Bluetooth (с телефона)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Предпочитать Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Предпочитать Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Использовать мобильный интернет, если нет Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Вид меню</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Показывать изображения подкастов</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Выбор главы</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Отправка выпуска на часы</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Ожидание телефона</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Ожидание подключения</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Не скачано на телефон</string>
+</resources>

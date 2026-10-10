@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">ঘড়িতে</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">দূরবর্তী প্লে</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">ঘড়িতে ডাউনলোড করুন</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">ঘড়ি থেকে সরান</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">ডাউনলোড হচ্ছে (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">ডাউনলোড ব্যর্থ হয়েছে</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi-এর জন্য অপেক্ষা করা হচ্ছে</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">মিডিয়া ফাইলটি চালানো যায়নি</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">ফোনে মুছে ফেলা হয়েছে</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">উপরে সরান</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">নিচে সরান</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">শুধু Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">শুধু ব্লুটুথ (ফোন থেকে)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi অগ্রাধিকার দিন</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">ব্লুটুথ অগ্রাধিকার দিন</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi না থাকলে মোবাইল ডেটা ব্যবহার করুন</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">মেনু প্রদর্শন</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">পডকাস্টের ছবি দেখান</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">চ্যাপ্টার নির্বাচন</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">পর্বটি ঘড়িতে পাঠানো হচ্ছে</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">ফোনের জন্য অপেক্ষা করা হচ্ছে</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">সংযোগের জন্য অপেক্ষা করা হচ্ছে</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">ফোনে ডাউনলোড করা হয়নি</string>
+</resources>

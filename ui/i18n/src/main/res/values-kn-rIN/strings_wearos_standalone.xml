@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">ವಾಚ್‌ನಲ್ಲಿ</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">ದೂರದಿಂದ ಪ್ಲೇ</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">ವಾಚ್‌ಗೆ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">ವಾಚ್‌ನಿಂದ ತೆಗೆದುಹಾಕಿ</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">ಡೌನ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi ಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">ಮಾಧ್ಯಮ ಫೈಲ್ ಪ್ಲೇ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">ಫೋನ್‌ನಲ್ಲಿ ಅಳಿಸಲಾಗಿದೆ</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">ಮೇಲಕ್ಕೆ ಸರಿಸಿ</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">ಕೆಳಕ್ಕೆ ಸರಿಸಿ</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi ಮಾತ್ರ</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">ಬ್ಲೂಟೂತ್ ಮಾತ್ರ (ಫೋನ್‌ನಿಂದ)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi ಗೆ ಆದ್ಯತೆ ನೀಡಿ</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">ಬ್ಲೂಟೂತ್‌ಗೆ ಆದ್ಯತೆ ನೀಡಿ</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi ಇಲ್ಲದಿದ್ದರೆ ಮೊಬೈಲ್ ಡೇಟಾ ಬಳಸಿ</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">ಮೆನು ಪ್ರದರ್ಶನ</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">ಪಾಡ್‌ಕಾಸ್ಟ್ ಚಿತ್ರಗಳನ್ನು ತೋರಿಸಿ</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">ಅಧ್ಯಾಯ ಆಯ್ಕೆ</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">ಸಂಚಿಕೆಯನ್ನು ವಾಚ್‌ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">ಫೋನ್‌ಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">ಸಂಪರ್ಕಕ್ಕಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">ಫೋನ್‌ನಲ್ಲಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿಲ್ಲ</string>
+</resources>

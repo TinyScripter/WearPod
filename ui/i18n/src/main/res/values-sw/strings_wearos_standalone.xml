@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Kwenye saa</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Kucheza kwa mbali</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Pakua kwenye saa</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Ondoa kwenye saa</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Inapakua (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Upakuaji umeshindwa</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Inasubiri Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Faili la midia halikuweza kuchezwa</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Imefutwa kwenye simu</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Sogeza juu</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Sogeza chini</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi pekee</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Bluetooth pekee (kutoka kwenye simu)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Pendelea Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Pendelea Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Tumia data ya simu ikiwa hakuna Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Mwonekano wa menyu</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Onyesha picha za podikasti</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Uchaguzi wa sura</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Inatuma kipindi kwenye saa</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Inasubiri simu</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Inasubiri muunganisho</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Haijapakuliwa kwenye simu</string>
+</resources>

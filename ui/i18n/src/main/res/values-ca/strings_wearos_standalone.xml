@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Al rellotge</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Reproducció remota</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Baixa al rellotge</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Elimina del rellotge</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">S\'està baixant (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">La baixada ha fallat</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">S\'està esperant la Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">No s\'ha pogut reproduir el fitxer multimèdia</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Suprimit al telèfon</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Mou amunt</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Mou avall</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Només Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Només Bluetooth (des del telèfon)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Prefereix la Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Prefereix el Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Utilitza dades mòbils si no hi ha Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Visualització del menú</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Mostra les imatges dels pòdcasts</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Selecció de capítols</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">S\'està enviant l\'episodi al rellotge</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">S\'està esperant el telèfon</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">S\'està esperant la connexió</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">No s\'ha baixat al telèfon</string>
+</resources>

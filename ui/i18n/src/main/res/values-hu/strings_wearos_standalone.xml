@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Az órán</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Távoli lejátszás</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Letöltés az órára</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Eltávolítás az óráról</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Letöltés (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">A letöltés sikertelen</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Várakozás Wi-Fi-re</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">A médiafájl nem játszható le</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Törölve a telefonon</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Mozgatás fel</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Mozgatás le</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Csak Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Csak Bluetooth (a telefonról)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi előnyben részesítése</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Bluetooth előnyben részesítése</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Mobiladat használata, ha nincs Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menü megjelenítése</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Podcastképek megjelenítése</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Fejezetválasztás</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Epizód küldése az órára</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Várakozás a telefonra</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Várakozás kapcsolatra</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Nincs letöltve a telefonon</string>
+</resources>

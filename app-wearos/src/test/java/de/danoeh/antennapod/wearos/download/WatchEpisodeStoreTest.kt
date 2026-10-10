@@ -126,6 +126,18 @@ class WatchEpisodeStoreTest {
     }
 
     @Test
+    fun testRemoveDeletesImage() {
+        WatchEpisodeStore.put(context, episode(1))
+        val image = File(File(context.filesDir, "images"), "image_item_1.jpg")
+        image.parentFile?.mkdirs()
+        image.writeText("image")
+
+        WatchEpisodeStore.remove(context, 1)
+
+        assertFalse(image.exists())
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.N_MR1])
     fun testHasSpaceFor() {
         WatchEpisodeStore.put(context, episode(1, size = 900L * 1024 * 1024))

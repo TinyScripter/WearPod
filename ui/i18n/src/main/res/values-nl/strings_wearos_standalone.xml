@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Op horloge</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Op afstand afspelen</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Downloaden naar horloge</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Verwijderen van horloge</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Downloaden (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Downloaden mislukt</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wachten op wifi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Het mediabestand kan niet worden afgespeeld</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Verwijderd op telefoon</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Omhoog verplaatsen</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Omlaag verplaatsen</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Alleen wifi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Alleen bluetooth (van telefoon)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Voorkeur voor wifi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Voorkeur voor bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Mobiele data gebruiken als er geen wifi is</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menuweergave</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Podcastafbeeldingen tonen</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Hoofdstukkeuze</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Aflevering wordt naar horloge verzonden</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Wachten op telefoon</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Wachten op verbinding</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Niet gedownload op telefoon</string>
+</resources>

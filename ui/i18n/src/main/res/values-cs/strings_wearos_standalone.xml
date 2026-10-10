@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">V hodinkách</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Vzdálené přehrávání</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Stáhnout do hodinek</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Odebrat z hodinek</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Stahování (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Stahování selhalo</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Čekání na Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Mediální soubor nelze přehrát</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Smazáno v telefonu</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Posunout nahoru</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Posunout dolů</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Pouze Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Pouze Bluetooth (z telefonu)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Upřednostnit Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Upřednostnit Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Použít mobilní data, pokud není k dispozici Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Zobrazení nabídky</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Zobrazit obrázky podcastů</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Výběr kapitol</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Odesílání epizody do hodinek</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Čekání na telefon</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Čekání na připojení</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Nestaženo v telefonu</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Στο ρολόι</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Απομακρυσμένη αναπαραγωγή</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Λήψη στο ρολόι</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Αφαίρεση από το ρολόι</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Λήψη (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Η λήψη απέτυχε</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Αναμονή για Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Δεν ήταν δυνατή η αναπαραγωγή του αρχείου πολυμέσων</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Διαγράφηκε στο τηλέφωνο</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Μετακίνηση πάνω</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Μετακίνηση κάτω</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Μόνο Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Μόνο Bluetooth (από το τηλέφωνο)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Προτίμηση Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Προτίμηση Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Χρήση δεδομένων κινητής όταν δεν υπάρχει Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Εμφάνιση μενού</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Εμφάνιση εικόνων podcast</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Επιλογή κεφαλαίου</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Αποστολή επεισοδίου στο ρολόι</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Αναμονή για το τηλέφωνο</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Αναμονή για σύνδεση</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Δεν έχει ληφθεί στο τηλέφωνο</string>
+</resources>

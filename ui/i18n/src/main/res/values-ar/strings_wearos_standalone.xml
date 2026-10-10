@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">على الساعة</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">تشغيل عن بُعد</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">تنزيل إلى الساعة</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">إزالة من الساعة</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">جارٍ التنزيل (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">فشل التنزيل</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">في انتظار شبكة Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">تعذّر تشغيل ملف الوسائط</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">حُذف على الهاتف</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">نقل لأعلى</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">نقل لأسفل</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi فقط</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">بلوتوث فقط (من الهاتف)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">تفضيل Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">تفضيل البلوتوث</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">استخدام بيانات الجوال عند عدم توفر Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">عرض القائمة</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">عرض صور البودكاست</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">اختيار الفصل</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">جارٍ إرسال الحلقة إلى الساعة</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">في انتظار الهاتف</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">في انتظار الاتصال</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">غير منزّل على الهاتف</string>
+</resources>

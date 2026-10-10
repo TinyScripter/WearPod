@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">На часовникот</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Далечинско репродуцирање</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Преземи на часовникот</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Отстрани од часовникот</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Се презема (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Преземањето не успеа</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Се чека Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Медиумската датотека не може да се репродуцира</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Избришано на телефонот</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Помести нагоре</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Помести надолу</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Само Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Само Bluetooth (од телефонот)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Претпочитај Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Претпочитај Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Користи мобилни податоци ако нема Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Приказ на менито</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Прикажи слики од подкастите</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Избор на поглавје</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Епизодата се испраќа на часовникот</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Се чека телефонот</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Се чека врска</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Не е преземено на телефонот</string>
+</resources>

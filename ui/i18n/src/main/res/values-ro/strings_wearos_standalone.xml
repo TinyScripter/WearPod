@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Pe ceas</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Redare la distanță</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Descarcă pe ceas</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Elimină de pe ceas</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Se descarcă (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Descărcarea a eșuat</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Se așteaptă Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Fișierul media nu a putut fi redat</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Șters pe telefon</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Mută în sus</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Mută în jos</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Doar Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Doar Bluetooth (de pe telefon)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Preferă Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Preferă Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Folosește date mobile dacă nu există Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Afișarea meniului</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Afișează imaginile podcasturilor</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Selectarea capitolului</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Se trimite episodul pe ceas</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Se așteaptă telefonul</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Se așteaptă conexiunea</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Nedescărcat pe telefon</string>
+</resources>

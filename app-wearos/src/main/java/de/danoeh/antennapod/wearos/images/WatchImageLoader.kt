@@ -46,7 +46,7 @@ object WatchImageLoader {
 
     suspend fun load(context: Context, path: String): ImageBitmap? = withContext(Dispatchers.IO) {
         memoryCache.get(path)?.let { return@withContext it }
-        val file = File(File(context.filesDir, IMAGES_DIR), path.trim('/').replace('/', '_') + ".jpg")
+        val file = getFile(context, path)
         val stored = if (file.exists()) decode(file.readBytes()) else null
         if (stored != null && System.currentTimeMillis() - file.lastModified() < MAX_AGE.inWholeMilliseconds) {
             memoryCache.put(path, stored)
@@ -69,6 +69,15 @@ object WatchImageLoader {
         memoryCache.put(path, image)
         image
     }
+
+    fun remove(context: Context, path: String) {
+        memoryCache.remove(path)
+        failed.remove(path)
+        getFile(context, path).delete()
+    }
+
+    private fun getFile(context: Context, path: String): File =
+        File(File(context.filesDir, IMAGES_DIR), path.trim('/').replace('/', '_') + ".jpg")
 
     fun onImageReceived(path: String, data: ByteArray) {
         pending.remove(path)?.complete(data)

@@ -38,7 +38,7 @@ Eigene Festlegungen (vom Nutzer noch zu bestätigen):
 | Protokoll | – | `WearDataPaths.java`, `WearSerializer.java`, `WearSettings.java` |
 | Tests | `EpisodeDownloadWorkerTest.kt` | `WearSerializerTest.java`, `WatchEpisodeStoreTest.kt` |
 | Doku | dieses Dokument | `app-wearos/README.md`, `net/sync/wear-interface/README.md` |
-| Texte | – | `ui/i18n/src/main/res/values/strings_wearos_standalone.xml` (12 neue Strings, nur Englisch) |
+| Texte | `values-<sprache>/strings_wearos_standalone.xml` für alle 51 weiteren Sprachen | `values/` (12 neue Strings), `values-de/` (12 ergänzt) |
 
 Pfade der Uhr relativ zu `app-wearos/src/main/java/de/danoeh/antennapod/wearos/`, Pfade des Phones relativ zu `app/src/play/java/de/danoeh/antennapod/`.
 
@@ -148,10 +148,16 @@ Alles ist nur ergänzt; alte Gegenstellen ignorieren unbekannte Pfade.
 1. **Nicht auf Geräten getestet.** Bluetooth-Übertragung, LTE, Speed-Sync und Bilder sind nur kompiliert und per Unit-Test abgedeckt. Testfälle siehe 6.
 2. **Phone-Übertragung ohne Foreground-Service:** Normale bzw. expedited Jobs können nach ca. 10 Minuten beendet werden. Die Uhr setzt beim nächsten Versuch am Offset fort; sehr große Dateien brauchen eventuell mehrere Anläufe. Ein Foreground-Service aus dem Hintergrund ist ab Android 12 eingeschränkt.
 3. **Debug-Builds:** Wegen des alten Fallbacks (aktives Netz im Debug-Build) wird bei „WLAN bevorzugen“ nie das Phone erreicht. Zum Testen der Übertragung „Nur Bluetooth“ oder „Bluetooth bevorzugen“ verwenden.
-4. **Deutsche Texte fehlen:** Die 12 neuen Strings stehen nur in `values/strings_wearos_standalone.xml`. `AGENTS.md` verbietet Änderungen an `values-*`. Der Fork pflegt aber `values-de/strings_wearos_standalone.xml`, das muss der Nutzer entscheiden.
+4. **Übersetzungen (seit 2026-10-10):** Auf Wunsch des Nutzers gibt es `strings_wearos_standalone.xml` mit allen 23 WearOS-Texten in allen 52 Sprachordnern von AntennaPod (`ui/i18n/src/main/res/values-*`), entgegen der Regel in `AGENTS.md`.
+   - **Deutsch:** übersetzt vom Nutzer bzw. passend zu seinen Vorgaben.
+   - **Alle anderen Sprachen:** KI-Übersetzungen, nicht von Muttersprachlern geprüft. Bei kleineren Sprachen (z. B. ast, br, sc, tt, ga, kn-rIN, ml, te, sw) ist das Risiko für holprige oder falsche Begriffe höher.
+   - **Begriffe:** Für „Kapitel“ wurde, wo vorhanden, der Begriff aus der jeweiligen `strings.xml` von AntennaPod übernommen.
+   - **Neue Texte:** Englisch in `values/` eintragen, Deutsch in `values-de/`; die anderen Sprachen fallen ohne Übersetzung auf Englisch zurück. Die Dateien wurden mit einem Python-Skript erzeugt (Schlüssel-Reihenfolge wie in `values/`). Apostrophe müssen als `\'` maskiert werden (z. B. Bretonisch, Französisch, Italienisch).
 5. **Netzwerk auf dem Computation-Scheduler:** `/chapters` und `/image/...` laufen im `WearListenerService` auf `Schedulers.computation()` (bestehendes Muster) und können dort ein paar Sekunden blockieren.
 6. **`WearMessageSender`** und die Bilder-Anfragen nutzen den ersten verbundenen Knoten, nicht den mit Capability. Das ist bekannt aus dem Review (Punkt 3.10).
-7. **Bilder-Cache:** Es gibt keine Größenbegrenzung auf der Disk; bei ca. 5 KB pro Bild unkritisch. Bilder entfernter Episoden bleiben liegen.
+7. **Bilder-Cache:** Es gibt keine Größenbegrenzung auf der Disk; bei ca. 5 KB pro Bild unkritisch.
+   - **Seit 2026-10-10:** Wird eine Episode von der Uhr entfernt, löscht `WatchEpisodeStore` ihr Bild mit (`WatchImageLoader.remove`, Datei `files/images/image_item_<id>.jpg` und Speicher-Cache). Das gilt für manuelles Entfernen, abgespielte Episoden und Episoden, die auf dem Phone fertig gehört oder gelöscht wurden.
+   - **Podcast-Bilder** (`image_feed_<id>.jpg`) bleiben, weil mehrere Episoden sie teilen.
 8. **Geschwindigkeit:** Nur Auswahl aus den Stufen, kein Feinregler. „Skip silence“ wird nicht übernommen.
 9. **Konflikt bei Geschwindigkeit:** Ändert der Nutzer die globale Geschwindigkeit am Phone, bevor das Data Item der Uhr angekommen ist, gewinnt die Uhr („last delivered wins“).
 

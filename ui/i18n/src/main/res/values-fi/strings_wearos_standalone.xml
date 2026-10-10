@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Kellossa</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Etätoisto</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Lataa kelloon</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Poista kellosta</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Ladataan (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Lataus epäonnistui</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Odotetaan Wi-Fi-yhteyttä</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Mediatiedostoa ei voitu toistaa</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Poistettu puhelimesta</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Siirrä ylös</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Siirrä alas</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Vain Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Vain Bluetooth (puhelimesta)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Suosi Wi-Fiä</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Suosi Bluetoothia</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Käytä mobiilidataa, jos Wi-Fi ei ole käytettävissä</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Valikon näkymä</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Näytä podcastien kuvat</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Kappaleen valinta</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Lähetetään jaksoa kelloon</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Odotetaan puhelinta</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Odotetaan yhteyttä</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Ei ladattu puhelimeen</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">വാച്ചിൽ</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">റിമോട്ട് പ്ലേ</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">വാച്ചിലേക്ക് ഡൗൺലോഡ് ചെയ്യുക</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">വാച്ചിൽ നിന്ന് നീക്കം ചെയ്യുക</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">ഡൗൺലോഡ് ചെയ്യുന്നു (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">ഡൗൺലോഡ് പരാജയപ്പെട്ടു</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi-ക്കായി കാത്തിരിക്കുന്നു</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">മീഡിയ ഫയൽ പ്ലേ ചെയ്യാൻ കഴിഞ്ഞില്ല</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">ഫോണിൽ ഇല്ലാതാക്കി</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">മുകളിലേക്ക് നീക്കുക</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">താഴേക്ക് നീക്കുക</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi മാത്രം</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">ബ്ലൂടൂത്ത് മാത്രം (ഫോണിൽ നിന്ന്)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi-ക്ക് മുൻഗണന നൽകുക</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">ബ്ലൂടൂത്തിന് മുൻഗണന നൽകുക</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi ഇല്ലെങ്കിൽ മൊബൈൽ ഡാറ്റ ഉപയോഗിക്കുക</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">മെനു പ്രദർശനം</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">പോഡ്‌കാസ്റ്റ് ചിത്രങ്ങൾ കാണിക്കുക</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">അധ്യായം തിരഞ്ഞെടുക്കൽ</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">എപ്പിസോഡ് വാച്ചിലേക്ക് അയയ്ക്കുന്നു</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">ഫോണിനായി കാത്തിരിക്കുന്നു</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">കണക്ഷനായി കാത്തിരിക്കുന്നു</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">ഫോണിൽ ഡൗൺലോഡ് ചെയ്തിട്ടില്ല</string>
+</resources>

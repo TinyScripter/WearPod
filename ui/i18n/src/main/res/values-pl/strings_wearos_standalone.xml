@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Na zegarku</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Odtwarzanie zdalne</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Pobierz na zegarek</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Usuń z zegarka</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Pobieranie (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Pobieranie nie powiodło się</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Oczekiwanie na Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Nie można odtworzyć pliku multimedialnego</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Usunięto na telefonie</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Przenieś w górę</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Przenieś w dół</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Tylko Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Tylko Bluetooth (z telefonu)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Preferuj Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Preferuj Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Używaj danych komórkowych, gdy brak Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Wygląd menu</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Pokazuj obrazy podcastów</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Wybór rozdziału</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Wysyłanie odcinka na zegarek</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Oczekiwanie na telefon</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Oczekiwanie na połączenie</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Nie pobrano na telefonie</string>
+</resources>

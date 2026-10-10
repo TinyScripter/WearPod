@@ -8,6 +8,8 @@ import android.util.Log
 import androidx.core.util.readText
 import androidx.core.util.writeText
 import de.danoeh.antennapod.model.feed.FeedItem
+import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
+import de.danoeh.antennapod.wearos.images.WatchImageLoader
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -139,7 +141,10 @@ object WatchEpisodeStore {
         _episodes.value = episodes.filter { it.itemId !in finishedIds }
         _progress.update { it - finishedIds.toSet() }
         save(context)
-        finishedOnPhone.forEach { getFile(context, it).delete() }
+        finishedOnPhone.forEach {
+            getFile(context, it).delete()
+            WatchImageLoader.remove(context, WearDataPaths.itemImagePath(it.itemId))
+        }
         return finishedIds
     }
 
@@ -150,6 +155,7 @@ object WatchEpisodeStore {
         _progress.update { it - itemId }
         save(context)
         getFile(context, episode).delete()
+        WatchImageLoader.remove(context, WearDataPaths.itemImagePath(itemId))
     }
 
     fun setProgress(itemId: Long, percent: Int) {

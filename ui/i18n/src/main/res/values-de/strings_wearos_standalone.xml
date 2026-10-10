@@ -11,4 +11,16 @@
     <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Auf dem Smartphone gelöscht</string>
     <string name="wearos_move_up" tools:ignore="UnusedResources">Nach oben</string>
     <string name="wearos_move_down" tools:ignore="UnusedResources">Nach unten</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Nur WLAN</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Nur Bluetooth (vom Smartphone)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">WLAN bevorzugen</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Bluetooth bevorzugen</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Mobile Daten nutzen, wenn kein WLAN verfügbar ist</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menü-Darstellung</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Podcast-Grafiken anzeigen</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Kapitelwahl</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Episode wird an die Uhr gesendet</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Warte auf Smartphone</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Warte auf Verbindung</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Nicht auf dem Smartphone heruntergeladen</string>
 </resources>
