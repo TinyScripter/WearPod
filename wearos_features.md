@@ -106,7 +106,7 @@ Gleiches Verhalten wie `PlaybackSpeedUtils.getCurrentPlaybackSpeed` auf dem Phon
 - **Uhr:** `ChapterSync` fragt nach dem Herunterladen auf die Uhr (`EpisodeDetailViewModel`) und speichert in `WatchEpisode.chapters`.
   - `null` heißt „noch nicht geholt“, eine leere Liste heißt „keine Kapitel“.
   - Fehlen die Kapitel, holt der Player sie einmal pro ViewModel nach.
-- **Fortschrittsring:** Kapitelanfänge sind als kleine Punkte auf dem Ring markiert (`ChapterMarkers` in `WatchPlayerActivity.kt`). Die Punkte haben die Ringfarbe, um 35 % abgedunkelt. Sie sitzen auf der Mitte des Rings, beginnen oben (270°) und laufen im Uhrzeigersinn wie der Fortschritt. Kapitel bei 0 oder nach dem Ende werden nicht markiert. Ist die Kapitelwahl ausgeschaltet, gibt es auch keine Punkte.
+- **Fortschrittsring:** Kapitelanfänge sind als Punkte auf dem Ring markiert (`ChapterMarkers` in `WatchPlayerActivity.kt`). Jeder Punkt hat 3 dp Radius, ist in `onSurface` gefüllt (hell) und hat einen 1 dp breiten Rand in der Hintergrundfarbe. Damit ist er sowohl auf dem gefüllten als auch auf dem leeren Teil des Rings gut sichtbar. Die erste Version (kleiner Punkt in abgedunkelter Ringfarbe) war zu dezent. Die Punkte sitzen auf der Mitte des Rings, beginnen oben (270°) und laufen im Uhrzeigersinn wie der Fortschritt. Kapitel bei 0 oder nach dem Ende werden nicht markiert. Ist die Kapitelwahl ausgeschaltet, gibt es auch keine Punkte.
 - **Player:** Ein Button öffnet einen `AlertDialog` mit den Kapiteln. Das aktuelle Kapitel ist per `Chapter.getAfterPosition` mit einem Play-Icon markiert. Tippen führt `MediaController.seekTo(start)` aus.
 
 ### 3.5 Grafiken
@@ -158,6 +158,8 @@ Alles ist nur ergänzt; alte Gegenstellen ignorieren unbekannte Pfade.
 10. **Icons auf der Uhr:** Vektor-Icons mit `android:fillColor="?attr/action_icon_color"` (z. B. `ic_settings`, `ic_check`, `ic_chapter_next`) sind auf der Uhr unsichtbar. Das Theme der Uhr kennt das Attribut nicht, die Füllfarbe wird transparent, und die Tönung von `Icon` übernimmt die Transparenz. Auf der Uhr nur Icons mit fester Farbe verwenden (`*_black`, `*_white`, `ic_notification_*`). Behoben am 2026-10-10: Einstellungen → `ic_settings_white`, Kapitel-Button → `ic_notification_next_chapter`, Markierung der aktuellen Geschwindigkeit → `ic_play_48dp_black`.
 
 11. **Springen in MP3-Dateien:** Viele Podcast-MP3s haben einen Xing-Header ohne Inhaltsverzeichnis oder gar keinen Seek-Header. Mit den Standard-Extraktoren von ExoPlayer sind sie zwar abspielbar, aber nicht durchsuchbar: Jeder Sprung (Kapitel, ±Skip, gespeicherte Position) landet bei 0. Die Phone-App setzt deshalb `DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)` (`ExoPlayerWrapper`). Seit 2026-10-10 macht `WatchPlaybackService` das genauso.
+
+12. **Fortschrittsring aktualisiert sich nicht:** Der `CircularProgressIndicator` von Wear Compose Material3 beobachtet seinen `progress`-Lambda per `snapshotFlow`. Der Lambda muss deshalb einen Compose-State lesen, z. B. über `rememberUpdatedState`. Ein Lambda, das nur einen übergebenen Wert einfängt, friert den Ring auf dem Stand seiner ersten Darstellung ein. Behoben am 2026-10-10 in `WatchPlayerScreen`.
 
 ## 6. Testfälle für Geräte
 

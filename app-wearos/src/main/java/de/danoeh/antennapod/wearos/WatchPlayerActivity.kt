@@ -19,12 +19,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -146,8 +145,9 @@ fun WatchPlayerScreen(
         if (volume != null) {
             LevelIndicator(value = { volume }, modifier = Modifier.align(Alignment.CenterStart))
         } else if (uiState.duration > 0) {
+            val progress by rememberUpdatedState(uiState.position.toFloat() / uiState.duration.toFloat())
             CircularProgressIndicator(
-                progress = { uiState.position.toFloat() / uiState.duration.toFloat() },
+                progress = { progress },
                 modifier = Modifier.fillMaxSize().padding(2.dp),
                 strokeWidth = 4.dp
             )
@@ -290,22 +290,23 @@ fun WatchPlayerScreen(
 
 @Composable
 private fun ChapterMarkers(chapters: List<Chapter>, duration: Int, strokeWidth: Dp, modifier: Modifier) {
-    val color = lerp(MaterialTheme.colorScheme.primary, Color.Black, CHAPTER_MARKER_DARKEN)
+    val color = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.background
     Canvas(modifier = modifier) {
         val radius = size.minDimension / 2 - strokeWidth.toPx() / 2
-        val markerRadius = strokeWidth.toPx() / 3
+        val markerRadius = CHAPTER_MARKER_RADIUS.toPx()
+        val outlineWidth = CHAPTER_MARKER_OUTLINE.toPx()
         chapters.filter { it.start > 0 && it.start < duration }.forEach { chapter ->
             val angle = Math.toRadians(CHAPTER_MARKER_START_ANGLE + 360.0 * chapter.start / duration)
-            drawCircle(
-                color = color,
-                radius = markerRadius,
-                center = center + Offset((radius * cos(angle)).toFloat(), (radius * sin(angle)).toFloat())
-            )
+            val markerCenter = center + Offset((radius * cos(angle)).toFloat(), (radius * sin(angle)).toFloat())
+            drawCircle(color = outlineColor, radius = markerRadius + outlineWidth, center = markerCenter)
+            drawCircle(color = color, radius = markerRadius, center = markerCenter)
         }
     }
 }
 
 private const val CHAPTER_MARKER_START_ANGLE = 270.0
-private const val CHAPTER_MARKER_DARKEN = 0.35f
+private val CHAPTER_MARKER_RADIUS = 3.dp
+private val CHAPTER_MARKER_OUTLINE = 1.dp
 
 private fun formatSpeed(speed: Float): String = String.format(Locale.getDefault(), "%.2fx", speed)
