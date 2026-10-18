@@ -59,13 +59,6 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
 
     init {
         viewModelScope.launch {
-            while (true) {
-                WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
-                delay(1.seconds)
-            }
-        }
-
-        viewModelScope.launch {
             WearDataRepository.nowPlaying.collect { nowPlaying ->
                 val liveData = nowPlaying?.takeIf { it.item.id == episode.id }
                 val position = liveData?.item?.media?.position ?: episode.media?.position ?: 0
@@ -156,6 +149,13 @@ class EpisodeDetailViewModel(application: Application, private val episode: Feed
         viewModelScope.launch(Dispatchers.IO) {
             EpisodeDownloadWorker.cancel(getApplication(), episode.id)
             WatchEpisodeStore.remove(getApplication(), episode.id)
+        }
+    }
+
+    suspend fun pollNowPlaying() {
+        while (true) {
+            WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
+            delay(1.seconds)
         }
     }
 

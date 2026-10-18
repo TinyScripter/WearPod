@@ -7,7 +7,7 @@ def forkApplicationId = "kleinabersmart.antennapod"
 def forkAppName = "AntennaPod Unofficial WearOs Mod"
 def forkVersionNameSuffix = "-mod"
 // Raise for a fork-only hotfix on the same upstream version (upstream release codes end with 95, so 1 to 4 are free)
-def forkVersionCodeOffset = 0
+def forkVersionCodeOffset = 2
 // The Wear OS app needs its own version code on Google Play: phone version code * 10 + this digit
 def forkWearVersionCodeDigit = 1
 // Minimum SDK required by Google Play for the fork, upstream values above it are kept

@@ -30,16 +30,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         viewModelScope.launch {
-            while (true) {
-                WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
-                delay(5.seconds)
-            }
-        }
-
-        viewModelScope.launch {
             WearDataRepository.nowPlaying.collect { nowPlaying ->
                 _uiState.update { it.copy(nowPlaying = nowPlaying) }
             }
+        }
+    }
+
+    suspend fun pollNowPlaying() {
+        while (true) {
+            WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
+            delay(5.seconds)
         }
     }
 }
