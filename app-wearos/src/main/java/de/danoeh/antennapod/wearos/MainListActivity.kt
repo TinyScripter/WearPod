@@ -17,7 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
@@ -30,11 +33,16 @@ import de.danoeh.antennapod.model.feed.FeedItem
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.ui.common.R as CommonR
 import de.danoeh.antennapod.wearos.composable.ListItem
+import de.danoeh.antennapod.wearos.images.rememberWatchImage
+import kotlinx.coroutines.launch
 
 class MainListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.pollNowPlaying() }
+        }
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
@@ -49,6 +57,12 @@ class MainListActivity : ComponentActivity() {
                     },
                     onOpenFeedList = {
                         startActivity(Intent(this, FeedListActivity::class.java))
+                    },
+                    onOpenWatchList = {
+                        startActivity(Intent(this, WatchListActivity::class.java))
+                    },
+                    onOpenSettings = {
+                        startActivity(Intent(this, WatchSettingsActivity::class.java))
                     },
                     onOpenEpisodeList = { path ->
                         val intent = Intent(this, EpisodeListActivity::class.java).apply {
@@ -67,6 +81,8 @@ fun MainListScreen(
     uiState: MainUiState,
     onOpenEpisodeDetail: (FeedItem) -> Unit,
     onOpenFeedList: () -> Unit,
+    onOpenWatchList: () -> Unit,
+    onOpenSettings: () -> Unit,
     onOpenEpisodeList: (String) -> Unit
 ) {
     val scrollState = rememberScalingLazyListState()
@@ -94,9 +110,36 @@ fun MainListScreen(
             }
 
             item {
+                ListItem(
+                    text = stringResource(CommonR.string.wearos_on_watch),
+                    iconRes = CommonR.drawable.ic_watch_black,
+                    onClick = onOpenWatchList
+                )
+            }
+
+            item {
+                ListItem(
+                    text = stringResource(CommonR.string.settings_label),
+                    iconRes = CommonR.drawable.ic_settings_white,
+                    onClick = onOpenSettings
+                )
+            }
+
+            item {
+                Text(
+                    text = stringResource(CommonR.string.wearos_remote_play),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+
+            item {
                 if (uiState.nowPlaying != null) {
                     ListItem(
                         text = uiState.nowPlaying.item.title ?: "",
+                        image = rememberWatchImage(WearDataPaths.itemImagePath(uiState.nowPlaying.item.id)),
                         onClick = { onOpenEpisodeDetail(uiState.nowPlaying.item) }
                     )
                 } else {

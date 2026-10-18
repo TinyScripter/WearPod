@@ -8,14 +8,14 @@ import kotlinx.coroutines.tasks.await
 object WearMessageSender {
     private const val TAG = "WearMessageSender"
 
-    suspend fun send(context: Context, path: String) {
+    suspend fun send(context: Context, path: String, data: ByteArray? = null) {
         try {
             val nodes = Wearable.getNodeClient(context).connectedNodes.await()
             val node = nodes.firstOrNull() ?: run {
                 Log.w(TAG, "No connected nodes")
                 return
             }
-            Wearable.getMessageClient(context).sendMessage(node.id, path, null).await()
+            Wearable.getMessageClient(context).sendMessage(node.id, path, data).await()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send message to phone", e)
         }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Saatda</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Uzaqdan oxutma</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Saata endir</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Saatdan sil</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Endirilir (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Endirmə uğursuz oldu</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi gözlənilir</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Media faylı oxudula bilmədi</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Telefonda silinib</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Yuxarı köçür</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Aşağı köçür</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Yalnız Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Yalnız Bluetooth (telefondan)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi-a üstünlük ver</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Bluetooth-a üstünlük ver</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi olmadıqda mobil datadan istifadə et</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menyu görünüşü</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Podkast şəkillərini göstər</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Fəsil seçimi</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Epizod saata göndərilir</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Telefon gözlənilir</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Bağlantı gözlənilir</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Telefona endirilməyib</string>
+</resources>

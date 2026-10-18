@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Laikrodyje</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Nuotolinis atkūrimas</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Atsisiųsti į laikrodį</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Pašalinti iš laikrodžio</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Atsisiunčiama (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Atsisiuntimas nepavyko</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Laukiama Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Nepavyko atkurti medijos failo</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Ištrinta telefone</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Perkelti aukštyn</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Perkelti žemyn</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Tik Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Tik Bluetooth (iš telefono)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Teikti pirmenybę Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Teikti pirmenybę Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Naudoti mobiliuosius duomenis, jei nėra Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Meniu rodinys</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Rodyti tinklalaidžių paveikslėlius</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Skyriaus pasirinkimas</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Epizodas siunčiamas į laikrodį</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Laukiama telefono</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Laukiama ryšio</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Neatsisiųsta į telefoną</string>
+</resources>

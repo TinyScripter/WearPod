@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">घड़ी पर</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">रिमोट प्ले</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">घड़ी पर डाउनलोड करें</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">घड़ी से हटाएं</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">डाउनलोड हो रहा है (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">डाउनलोड विफल रहा</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi की प्रतीक्षा</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">मीडिया फ़ाइल चलाई नहीं जा सकी</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">फ़ोन पर हटाया गया</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">ऊपर ले जाएं</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">नीचे ले जाएं</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">केवल Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">केवल ब्लूटूथ (फ़ोन से)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi को प्राथमिकता दें</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">ब्लूटूथ को प्राथमिकता दें</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi न होने पर मोबाइल डेटा का उपयोग करें</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">मेनू प्रदर्शन</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">पॉडकास्ट की तस्वीरें दिखाएं</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">चैप्टर चयन</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">एपिसोड घड़ी पर भेजा जा रहा है</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">फ़ोन की प्रतीक्षा</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">कनेक्शन की प्रतीक्षा</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">फ़ोन पर डाउनलोड नहीं हुआ</string>
+</resources>

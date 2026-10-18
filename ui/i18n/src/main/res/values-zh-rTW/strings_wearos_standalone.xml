@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">手錶上</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">遠端播放</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">下載到手錶</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">從手錶移除</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">正在下載 (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">下載失敗</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">正在等待 Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">無法播放媒體檔案</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">已在手機上刪除</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">上移</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">下移</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">僅限 Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">僅限藍牙（來自手機）</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">優先使用 Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">優先使用藍牙</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">沒有 Wi-Fi 時使用行動數據</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">選單顯示</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">顯示 Podcast 圖片</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">章節選擇</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">正在將單集傳送到手錶</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">正在等待手機</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">正在等待連線</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">未在手機上下載</string>
+</resources>

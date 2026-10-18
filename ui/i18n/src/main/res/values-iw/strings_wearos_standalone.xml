@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">בשעון</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">ניגון מרחוק</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">הורדה לשעון</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">הסרה מהשעון</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">מתבצעת הורדה (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">ההורדה נכשלה</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">בהמתנה ל־Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">לא ניתן לנגן את קובץ המדיה</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">נמחק בטלפון</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">הזזה למעלה</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">הזזה למטה</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi בלבד</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Bluetooth בלבד (מהטלפון)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">העדפת Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">העדפת Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">שימוש בחבילת גלישה כשאין Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">תצוגת התפריט</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">הצגת תמונות של פודקאסטים</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">בחירת קטע</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">הפרק נשלח לשעון</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">בהמתנה לטלפון</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">בהמתנה לחיבור</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">לא הורד בטלפון</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">시계에 있음</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">원격 재생</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">시계에 다운로드</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">시계에서 제거</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">다운로드 중 (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">다운로드 실패</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi 대기 중</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">미디어 파일을 재생할 수 없습니다</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">휴대전화에서 삭제됨</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">위로 이동</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">아래로 이동</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi만</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">블루투스만 (휴대전화에서)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi 우선</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">블루투스 우선</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi가 없으면 모바일 데이터 사용</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">메뉴 표시</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">팟캐스트 이미지 표시</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">챕터 선택</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">에피소드를 시계로 보내는 중</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">휴대전화 대기 중</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">연결 대기 중</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">휴대전화에 다운로드되지 않음</string>
+</resources>

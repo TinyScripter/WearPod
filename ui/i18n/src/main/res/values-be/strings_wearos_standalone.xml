@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">На гадзінніку</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Аддаленае прайграванне</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Спампаваць на гадзіннік</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Выдаліць з гадзінніка</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Спампоўванне (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Памылка спампоўвання</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Чаканне Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Не ўдалося прайграць медыяфайл</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Выдалена на тэлефоне</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Перамясціць уверх</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Перамясціць уніз</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Толькі Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Толькі Bluetooth (з тэлефона)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Аддаваць перавагу Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Аддаваць перавагу Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Выкарыстоўваць мабільныя даныя, калі Wi-Fi недаступны</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Выгляд меню</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Паказваць выявы падкастаў</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Выбар раздзела</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Адпраўка эпізода на гадзіннік</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Чаканне тэлефона</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Чаканне злучэння</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Не спампавана на тэлефон</string>
+</resources>

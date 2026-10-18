@@ -13,8 +13,10 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.model.feed.FeedItem
+import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.wearos.composable.ListItem
 import de.danoeh.antennapod.wearos.composable.ListScaffold
+import de.danoeh.antennapod.wearos.images.rememberWatchImage
 
 class EpisodeListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +64,7 @@ fun EpisodeListScreen(uiState: EpisodeListUiState, onOpenEpisodeDetail: (FeedIte
         items(episodes!!) { episode ->
             ListItem(
                 text = episode.title ?: "",
+                image = rememberWatchImage(WearDataPaths.itemImagePath(episode.id)),
                 onClick = { onOpenEpisodeDetail(episode) }
             )
         }

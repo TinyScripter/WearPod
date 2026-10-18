@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">På uret</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Fjernafspilning</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Hent til uret</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Fjern fra uret</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Henter (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Hentning mislykkedes</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Venter på wi-fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Mediefilen kunne ikke afspilles</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Slettet på telefonen</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Flyt op</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Flyt ned</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Kun wi-fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Kun Bluetooth (fra telefonen)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Foretræk wi-fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Foretræk Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Brug mobildata, hvis der ikke er wi-fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menuvisning</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Vis podcastbilleder</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Kapitelvalg</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Sender afsnit til uret</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Venter på telefonen</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Venter på forbindelse</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Ikke hentet på telefonen</string>
+</resources>

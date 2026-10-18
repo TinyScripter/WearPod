@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">På klockan</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Fjärruppspelning</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Hämta till klockan</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Ta bort från klockan</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Hämtar (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Hämtningen misslyckades</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Väntar på wifi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Mediefilen kunde inte spelas upp</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Borttagen på telefonen</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Flytta upp</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Flytta ner</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Endast wifi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Endast Bluetooth (från telefonen)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Föredra wifi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Föredra Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Använd mobildata om wifi inte finns</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Menyvisning</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Visa poddbilder</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Kapitelval</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Skickar avsnittet till klockan</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Väntar på telefonen</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Väntar på anslutning</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Inte hämtad på telefonen</string>
+</resources>

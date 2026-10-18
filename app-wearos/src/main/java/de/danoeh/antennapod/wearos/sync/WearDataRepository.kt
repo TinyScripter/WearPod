@@ -1,8 +1,10 @@
 package de.danoeh.antennapod.wearos.sync
 
+import de.danoeh.antennapod.model.feed.Chapter
 import de.danoeh.antennapod.model.feed.Feed
 import de.danoeh.antennapod.model.feed.FeedItem
 import de.danoeh.antennapod.net.sync.wearinterface.WearNowPlaying
+import de.danoeh.antennapod.net.sync.wearinterface.WearSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +24,15 @@ object WearDataRepository {
     private val _nowPlaying = MutableStateFlow<WearNowPlaying?>(null)
     val nowPlaying: StateFlow<WearNowPlaying?> = _nowPlaying
 
+    private val _episodeDetails = MutableStateFlow<Map<Long, FeedItem>>(emptyMap())
+    val episodeDetails: StateFlow<Map<Long, FeedItem>> = _episodeDetails
+
+    private val _chapters = MutableStateFlow<Map<Long, List<Chapter>>>(emptyMap())
+    val chapters: StateFlow<Map<Long, List<Chapter>>> = _chapters
+
+    private val _settings = MutableStateFlow<WearSettings?>(null)
+    val settings: StateFlow<WearSettings?> = _settings
+
     fun updateNowPlaying(nowPlaying: WearNowPlaying?) {
         _nowPlaying.value = nowPlaying
     }
@@ -30,7 +41,23 @@ object WearDataRepository {
         _episodesByPath.update { it + (path to items) }
     }
 
+    fun clearEpisodes(path: String) {
+        _episodesByPath.update { it - path }
+    }
+
     fun updateFeeds(path: String, feeds: List<Feed>) {
         _feedsByPath.update { it + (path to feeds) }
+    }
+
+    fun updateEpisodeDetails(item: FeedItem) {
+        _episodeDetails.update { it + (item.id to item) }
+    }
+
+    fun updateChapters(itemId: Long, chapters: List<Chapter>) {
+        _chapters.update { it + (itemId to chapters) }
+    }
+
+    fun updateSettings(settings: WearSettings?) {
+        _settings.value = settings
     }
 }

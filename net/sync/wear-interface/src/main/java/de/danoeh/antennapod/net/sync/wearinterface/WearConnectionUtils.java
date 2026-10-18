@@ -22,8 +22,15 @@ public final class WearConnectionUtils {
      * can negotiate compatibility when updated independently.
      */
     public static boolean isPhoneSupported(@NonNull Context context) {
+        return isCapabilityReachable(context, context.getString(R.string.wear_capability_phone));
+    }
+
+    public static boolean isPhoneStandaloneSupported(@NonNull Context context) {
+        return isCapabilityReachable(context, context.getString(R.string.wear_capability_phone_standalone));
+    }
+
+    private static boolean isCapabilityReachable(@NonNull Context context, @NonNull String capability) {
         try {
-            String capability = context.getString(R.string.wear_capability_phone);
             Set<Node> nodes = Tasks.await(
                     Wearable.getCapabilityClient(context)
                             .getCapability(capability, CapabilityClient.FILTER_REACHABLE))

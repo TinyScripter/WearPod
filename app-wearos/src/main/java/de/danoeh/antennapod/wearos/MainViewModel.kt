@@ -26,19 +26,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val name = WearConnectionUtils.getConnectedNodeName(getApplication())
             _uiState.update { it.copy(connectedPhone = name) }
-        }
-
-        viewModelScope.launch {
-            while (true) {
-                WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
-                delay(5.seconds)
-            }
+            WearMessageSender.send(getApplication(), WearDataPaths.SETTINGS)
         }
 
         viewModelScope.launch {
             WearDataRepository.nowPlaying.collect { nowPlaying ->
                 _uiState.update { it.copy(nowPlaying = nowPlaying) }
             }
+        }
+    }
+
+    suspend fun pollNowPlaying() {
+        while (true) {
+            WearMessageSender.send(getApplication(), WearDataPaths.NOW_PLAYING)
+            delay(5.seconds)
         }
     }
 }

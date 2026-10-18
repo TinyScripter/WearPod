@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Сәгатьтә</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Ерактан уйнату</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Сәгатькә йөкләү</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Сәгатьтән бетерү</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Йөкләнә (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Йөкләп булмады</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Wi-Fi көтелә</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Медиа файлны уйнатып булмады</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Телефонда бетерелгән</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Өскә күчерү</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Аска күчерү</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Бары тик Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Бары тик Bluetooth (телефоннан)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Wi-Fi өстенрәк</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Bluetooth өстенрәк</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Wi-Fi булмаса, мобиль интернетны куллану</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Меню күренеше</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Подкаст рәсемнәрен күрсәтү</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Бүлек сайлау</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Эпизод сәгатькә җибәрелә</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Телефон көтелә</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Тоташу көтелә</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Телефонга йөкләнмәгән</string>
+</resources>

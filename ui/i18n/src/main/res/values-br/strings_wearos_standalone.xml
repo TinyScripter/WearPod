@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">War an eurier</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Lenn a-bell</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Pellgargañ war an eurier</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Dilemel diwar an eurier</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">O pellgargañ (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">C\'hwitet eo ar pellgargañ</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">O c\'hortoz ar Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">N\'eus ket bet gallet lenn ar restr media</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Dilamet war ar pellgomz</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Dilec\'hiañ d\'an nec\'h</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Dilec\'hiañ d\'an traoñ</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Wi-Fi hepken</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Bluetooth hepken (eus ar pellgomz)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Gwell eo ar Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Gwell eo ar Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Implijout ar roadennoù hezoug ma n\'eus Wi-Fi ebet</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Diskouez al lañser</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Diskouez skeudennoù ar podkastoù</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Dibab ar chabistr</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">O kas ar rann d\'an eurier</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">O c\'hortoz ar pellgomz</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">O c\'hortoz ar c\'hennask</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">N\'eo ket pellgarget war ar pellgomz</string>
+</resources>

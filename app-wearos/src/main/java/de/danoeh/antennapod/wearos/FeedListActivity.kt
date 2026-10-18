@@ -16,6 +16,7 @@ import de.danoeh.antennapod.model.feed.Feed
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.wearos.composable.ListItem
 import de.danoeh.antennapod.wearos.composable.ListScaffold
+import de.danoeh.antennapod.wearos.images.rememberWatchImage
 
 class FeedListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +53,7 @@ fun FeedListScreen(uiState: FeedListUiState, onOpenFeedEpisodes: (Long) -> Unit)
         items(feeds!!) { feed ->
             ListItem(
                 text = feed.title ?: "",
+                image = rememberWatchImage(WearDataPaths.feedImagePath(feed.id)),
                 onClick = { onOpenFeedEpisodes(feed.id) }
             )
         }

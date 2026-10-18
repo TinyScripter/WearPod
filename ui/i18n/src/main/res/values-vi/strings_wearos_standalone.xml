@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="wearos_on_watch" tools:ignore="UnusedResources">Trên đồng hồ</string>
+    <string name="wearos_remote_play" tools:ignore="UnusedResources">Phát từ xa</string>
+    <string name="wearos_download_to_watch" tools:ignore="UnusedResources">Tải xuống đồng hồ</string>
+    <string name="wearos_remove_from_watch" tools:ignore="UnusedResources">Xóa khỏi đồng hồ</string>
+    <string name="wearos_downloading" tools:ignore="UnusedResources">Đang tải xuống (%1$d%%)</string>
+    <string name="wearos_download_failed" tools:ignore="UnusedResources">Tải xuống thất bại</string>
+    <string name="wearos_waiting_for_wifi" tools:ignore="UnusedResources">Đang chờ Wi-Fi</string>
+    <string name="wearos_playback_failed" tools:ignore="UnusedResources">Không thể phát tệp đa phương tiện</string>
+    <string name="wearos_deleted_on_phone" tools:ignore="UnusedResources">Đã xóa trên điện thoại</string>
+    <string name="wearos_move_up" tools:ignore="UnusedResources">Di chuyển lên</string>
+    <string name="wearos_move_down" tools:ignore="UnusedResources">Di chuyển xuống</string>
+    <string name="wearos_download_wifi_only" tools:ignore="UnusedResources">Chỉ Wi-Fi</string>
+    <string name="wearos_download_bluetooth_only" tools:ignore="UnusedResources">Chỉ Bluetooth (từ điện thoại)</string>
+    <string name="wearos_download_prefer_wifi" tools:ignore="UnusedResources">Ưu tiên Wi-Fi</string>
+    <string name="wearos_download_prefer_bluetooth" tools:ignore="UnusedResources">Ưu tiên Bluetooth</string>
+    <string name="wearos_download_mobile_data" tools:ignore="UnusedResources">Dùng dữ liệu di động nếu không có Wi-Fi</string>
+    <string name="wearos_menu_display" tools:ignore="UnusedResources">Hiển thị menu</string>
+    <string name="wearos_show_images" tools:ignore="UnusedResources">Hiện hình ảnh podcast</string>
+    <string name="wearos_chapter_selection" tools:ignore="UnusedResources">Chọn chương</string>
+    <string name="wearos_sending_to_watch" tools:ignore="UnusedResources">Đang gửi tập vào đồng hồ</string>
+    <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Đang chờ điện thoại</string>
+    <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Đang chờ kết nối</string>
+    <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Chưa tải xuống trên điện thoại</string>
+</resources>
