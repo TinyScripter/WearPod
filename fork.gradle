@@ -38,6 +38,8 @@ subprojects { subproject ->
                 android.defaultConfig.versionNameSuffix = forkVersionNameSuffix
                 def versionCode = version.code + forkVersionCodeOffset
                 android.defaultConfig.versionCode = isWear ? versionCode * 10 + forkWearVersionCodeDigit : versionCode
+                android.sourceSets.getByName("main").res.srcDir(rootProject.file("fork-res/main"))
+                android.sourceSets.getByName("debug").res.srcDir(rootProject.file("fork-res/debug"))
                 android.buildTypes.each { buildType ->
                     def isDebug = buildType.name == "debug"
                     buildType.resValue("string", "app_name", isDebug ? forkAppName + " Debug" : forkAppName)
