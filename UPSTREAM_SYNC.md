@@ -1,11 +1,14 @@
 # Upstream-Updates in den WearOS-Mod übernehmen
 
+Kurzfassung. Das Branch-Modell, den Release-Build und das Veröffentlichen beschreibt `FORK_RELEASE.md`.
+
 ## Branches
 
 | Branch | Inhalt |
 |---|---|
 | `develop` | Reiner Spiegel von `upstream/develop`, keine eigenen Commits |
-| `wearos-support` | `develop` plus WearOS-Funktion plus Mod (Name, App-IDs, README, Icon) |
+| `wearos-features` | `develop` plus Wear-Funktionen, kein Branding |
+| `wearos-support` | `wearos-features` plus Branding (Name, App-IDs, Icons in `fork-res/`, `.github/README.md`) |
 
 Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
 
@@ -20,41 +23,45 @@ Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
    git push origin develop
    ```
 
-   Schlägt `--ff-only` fehl, liegen eigene Commits auf `develop`. Die gehören auf `wearos-support`.
+   Schlägt `--ff-only` fehl, liegen eigene Commits auf `develop`. Die gehören nach `wearos-features` (Funktionen) oder `wearos-support` (Branding).
 
-2. Neuen Upstream-Stand in den Mod-Branch bringen:
+2. Neuen Upstream-Stand in `wearos-features` bringen:
 
    ```bash
-   git checkout wearos-support
+   git checkout wearos-features
    git merge develop
    ```
 
-   Alternative mit linearer Historie (benötigt anschließend einen Force-Push):
+   Nicht rebasen: `wearos-features` wird in `wearos-support` hineingemergt, ein Rebase würde dort doppelte Commits und Konflikte erzeugen.
+
+   Typische Konfliktstellen:
+
+   - `playback/service/.../Media3PlaybackService.java`: Wear-Hooks
+   - `app/src/play/AndroidManifest.xml`: Wear-Listener-Service
+   - `app/src/play/.../WearListenerService.java`, `net/sync/wear-interface/...`, `app-wearos/...`: Upstream entwickelt die Wear-App weiter
+   - `gradle/libs.versions.toml`, `app-wearos/build.gradle`: Abhängigkeiten
+
+   Hat Upstream eine API geändert, die der Wear-Code nutzt (zum Beispiel `FeedMedia`), den Wear-Code anpassen (`WearPositionApplier`, `WearListenerService`).
+
+3. Funktionen nach `wearos-support` übernehmen:
 
    ```bash
-   git rebase develop
-   git push --force-with-lease origin wearos-support
+   git checkout wearos-support
+   git merge wearos-features
    ```
 
-3. Konflikte lösen. Typische Stellen:
-
-   - `app/build.gradle`, `common.gradle`: Application-ID, Versionsname und Wear-Abhängigkeiten
-   - `app/src/play/AndroidManifest.xml`: Wear-Listener-Service
-   - `ui/i18n/src/main/res/values/strings.xml`: neue Wear-Strings
-   - `playback/service/.../Media3PlaybackService.java`: Wear-Hooks
+   Hier kann nur das Branding kollidieren, praktisch nur die Zeile `apply from: "fork.gradle"` am Ende der Root-`build.gradle`. Dort Upstream-Inhalt übernehmen und die Zeile wieder anhängen.
 
    Das Fork-README (`.github/README.md`) und die Fork-Icons (`fork-res/`, eingebunden in `fork.gradle`) sind neue Dateien und verursachen keine Konflikte. Das Root-`README.md` und `ui/common` bleiben auf dem Upstream-Stand.
 
-   Bei Konflikten im Mod-Teil die Mod-Werte behalten, alles andere von Upstream übernehmen.
-
 4. Prüfen, dass der Mod noch erhalten ist:
 
-   - Anwendungsname und Application-ID sind weiterhin die des Mods (`app/build.gradle`, `common.gradle`, `app-wearos/build.gradle`)
+   - Anwendungsname und Application-ID sind weiterhin die des Mods (`fork.gradle`)
    - Die Wear-App nutzt dieselbe Application-ID wie die Phone-App
    - `app-wearos/proguard.cfg` passt zu neuen Abhängigkeiten
-   - Hat Upstream eine API geändert, die der Wear-Code nutzt (zum Beispiel `FeedMedia`), den Wear-Code anpassen (`WearPositionApplier`, `WearListenerService`)
+   - `fork.gradle` findet `versionCode` und `versionName` noch in `app/build.gradle`
 
-5. Bauen und testen:
+5. Bauen und testen (zuerst in `wearos-features`, danach in `wearos-support`):
 
    ```bash
    ./gradlew :app:assembleDebug
@@ -66,9 +73,10 @@ Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
 6. Veröffentlichen:
 
    ```bash
+   git push origin wearos-features
    git push origin wearos-support
    ```
 
 ## Neue Upstream-Release-Tags
 
-Neue Tags (zum Beispiel `3.12.3`) kommen mit `git fetch upstream`. Für einen Release-Stand des Mods einen eigenen Branch oder Tag von `wearos-support` anlegen, etwa `wearos-mod-3.12.3`.
+Neue Tags (zum Beispiel `3.12.3`) kommen mit `git fetch upstream`. Für einen Release-Stand des Mods einen eigenen Branch oder Tag von `wearos-support` anlegen, etwa `wearos-mod-3.12.3`. Der Ablauf für Release-Builds steht in `FORK_RELEASE.md`.
