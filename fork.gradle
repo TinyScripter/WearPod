@@ -1,10 +1,10 @@
-// Settings of the fork "AntennaPod Unofficial WearOs Mod".
+// Settings of the fork "WearPod - based on AntennaPod".
 // Applied from the root build.gradle, so the build files of the modules stay identical to upstream
 // and new upstream releases can be merged without conflicts.
 // The version is taken from app/build.gradle (maintained by upstream) and only gets a suffix.
 
 def forkApplicationId = "kleinabersmart.antennapod"
-def forkAppName = "AntennaPod Unofficial WearOs Mod"
+def forkAppName = "WearPod - based on AntennaPod"
 def forkVersionNameSuffix = "-mod"
 // Raise for a fork-only hotfix on the same upstream version (upstream release codes end with 95, so 1 to 4 are free)
 def forkVersionCodeOffset = 2

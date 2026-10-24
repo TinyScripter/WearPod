@@ -1,4 +1,4 @@
-# AntennaPod Unofficial WearOs Mod
+# WearPod - based on AntennaPod
 
 [![License: GPL v3](https://img.shields.io/github/license/AntennaPod/AntennaPod)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -114,7 +114,7 @@ Update the apps the same way. As long as the package name and the key stay the s
 
 ### Android Auto
 
-Android Auto only shows apps that were not installed from the Play Store if the developer options are also enabled **in Android Auto**. In the settings of Android Auto, tap the version number several times and then enable the option to allow apps from unknown sources. Without this, AntennaPod does not appear in the car.
+Android Auto only shows apps that were not installed from the Play Store if the developer options are also enabled **in Android Auto**. In the settings of Android Auto, tap the version number several times and then enable the option to allow apps from unknown sources. Without this, WearPod does not appear in the car.
 
 ## Building
 

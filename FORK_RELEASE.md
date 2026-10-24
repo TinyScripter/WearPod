@@ -25,10 +25,13 @@ upstream/develop → develop              (Spiegel)
 
 - **App-ID, App-Name, Provider-Authority, Version, minSdk 24 (für Google Play):** nur in `fork.gradle`. Sie wird über eine einzige Zeile am Ende der Root-`build.gradle` eingebunden. `app/build.gradle` und `app-wearos/build.gradle` enthalten dafür nichts.
 - **Version:** `fork.gradle` liest `versionCode`/`versionName` aus `app/build.gradle` (pflegt Upstream) und hängt `-mod` an. Die Uhr bekommt `versionCode × 10 + 1`. Beispiel: Upstream 3.12.3 (`3120395`) ergibt Phone `3.12.3-mod` / `3120395` und Uhr `3.12.3-mod` / `31203951`. Bei einem neuen Release ist deshalb **nichts** anzupassen.
-- **Launcher-Icons:** in `fork-res/main/` und `fork-res/debug/`. `fork.gradle` bindet beide Ordner für `:app` und `:app-wearos` ein. Die Upstream-Icons in `ui/common` bleiben unverändert.
+- **Launcher-Icons:** eigenes WearPod-Icon (mintfarbene Uhr mit Play-Button als Zifferblatt auf dunkelgrünem Verlauf) als Vector Drawables in `fork-res/main/mipmap-anydpi/`: Hintergrund, Vordergrund, Monochrom-Ebene und `ic_launcher.xml` für Android 7. Die Hintergrundfarben stehen in `fork-res/main/values/fork_icon_colors.xml`, Debug-Builds bekommen über `fork-res/debug/values/fork_icon_colors.xml` einen grauen Hintergrund. `fork.gradle` bindet beide Ordner für `:app` und `:app-wearos` ein. `mipmap-anydpi` hat Vorrang vor den PNGs in `ui/common`, das adaptive Icon `ui/common/src/main/res/mipmap-anydpi-v26/ic_launcher.xml` greift auf die Fork-Ebenen zu. Die Upstream-Icons in `ui/common` bleiben unverändert.
+- **Grafik unter Einstellungen → Über:** `fork-res/main/drawable-anydpi/teaser.xml` im Stil des Icons ersetzt `ui/common/src/main/res/drawable-nodpi/teaser.webp`.
 - **README:** das Fork-README liegt in `.github/README.md` (GitHub zeigt es vor dem Root-`README.md` an). Das Root-`README.md` bleibt der Upstream-Stand.
 - **Weitere Branding-Dateien:** `PRIVACY.md`, `FORK_RELEASE.md`, `UPSTREAM_SYNC.md`.
-- **Strings der Fork-Funktionen:** in `ui/i18n/src/main/res/values/strings_wearos_standalone.xml` und den `values-*/strings_wearos_standalone.xml`. `strings.xml` und die von Weblate gepflegten Übersetzungen bleiben unverändert.
+- **Einstellungen (Ausnahme, Upstream-Dateien geändert):** In `app/.../ui/screen/preferences/MainPreferencesFragment.java` ist der Upstream-Block entfernt, der bei fremder Package-ID den GPL-Hinweis anzeigt und die Kategorie "Projekt" ausblendet. "Forum" und "Mitwirken" dort sowie die Buttons in `ui/preferences/.../bugreport/BugReportFragment.java` zeigen auf `https://github.com/TinyScripter/AntennaPod` (bzw. `/issues`). "Dokumentation" und die Datenschutzerklärung zeigen weiter auf antennapod.org. In `ui/preferences/src/main/res/xml/preferences_about.xml` hat der Versionseintrag den Titel `@string/app_name` statt `@string/antennapod_version`.
+- **Strings der Fork-Funktionen:** in `ui/i18n/src/main/res/values/strings_wearos_standalone.xml` und den `values-*/strings_wearos_standalone.xml`.
+- **App-Name in den Texten (Ausnahme, Upstream-Dateien geändert):** In der englischen `ui/i18n/src/main/res/values/strings.xml` steht statt "AntennaPod" überall "WearPod". Bewusst unverändert bleiben `antennapod_version` (ungenutzt), `contributors_summary`, `rating_volunteers_label` und `rating_rate`, weil sie das Original meinen bzw. der Bewertungsdialog zum Play-Store-Eintrag des Originals führt. In `bottom_navigation_deprecation_warning` steht "AntennaPod, which WearPod is based on". Die von Weblate gepflegten Übersetzungen in `values-*/` bleiben unverändert und enthalten weiter "AntennaPod". Dasselbe gilt für `html-export-template.html` (Titel, Überschrift, Link zum Fork statt Logo und Play-Store-Link) und die beiden Hinweistexte in `FeedDatabaseWriter.java`.
 
 ## Einmalige Einrichtung
 
@@ -96,7 +99,12 @@ Das bringt auch den neuen Stand von `develop` mit, weil er in Schritt 2 in `wear
 | Datei | Lösung |
 |---|---|
 | `build.gradle` (Root) | Upstream-Inhalt übernehmen und die Zeile `apply from: "fork.gradle"` am Ende wieder anhängen |
-| Launcher-Icons | Hat Upstream das Logo neu gestaltet, das Fork-Icon in `fork-res/` auf Basis des neuen Logos neu erzeugen. Das ist kein Merge-Konflikt, weil die Dateien in unterschiedlichen Ordnern liegen |
+| `MainPreferencesFragment.java` | Upstream-Änderungen übernehmen, den Block mit dem GPL-Hinweis aber weiter entfernt lassen (nur der Debug-Hinweis `packageHash == -1190467065` bleibt). "Forum" und "Mitwirken" auf `https://github.com/TinyScripter/AntennaPod` lassen |
+| `BugReportFragment.java` | Upstream-Änderungen übernehmen, die Buttons auf `https://github.com/TinyScripter/AntennaPod` und `https://github.com/TinyScripter/AntennaPod/issues` lassen |
+| `preferences_about.xml` | Upstream-Änderungen übernehmen, der Versionseintrag behält den Titel `@string/app_name` |
+| `values/strings.xml` | Upstream-Änderungen übernehmen und danach in der Datei nach `AntennaPod` suchen. Neue oder geänderte Texte wieder auf "WearPod" umstellen, außer die oben genannten Ausnahmen |
+| `html-export-template.html`, `FeedDatabaseWriter.java` | Upstream-Änderungen übernehmen, "WearPod" und den Link zum Fork-Repo beibehalten |
+| Launcher-Icons | Kein Merge-Konflikt, weil das WearPod-Icon ein eigener Entwurf in `fork-res/` ist. Nur prüfen, ob Upstream in `ui/common` die Namen `ic_launcher_background`, `ic_launcher_foreground` oder `ic_launcher_monochrome` bzw. `mipmap-anydpi-v26/ic_launcher.xml` geändert hat, und `fork-res/` dann angleichen |
 
 ```bash
 git add <dateien>
@@ -129,7 +137,9 @@ package: name='kleinabersmart.antennapod' versionCode='3120395' versionName='3.1
 package: name='kleinabersmart.antennapod' versionCode='31203951' versionName='3.12.3-mod' ...
 ```
 
-Zusätzlich kontrollieren, dass die Fork-Icons verwendet werden. Dazu die `ic_launcher*.png` aus dem APK mit den Dateien in `fork-res/main/` vergleichen, zum Beispiel mit `md5sum`.
+Zusätzlich kontrollieren, dass das WearPod-Icon verwendet wird: Im Launcher von Phone und Uhr muss das dunkelgrüne Icon mit der mintfarbenen Uhr und dem Play-Button erscheinen, nicht die AntennaPod-Antenne.
+
+In der installierten App die Einstellungen öffnen: Es darf kein roter GPL-Hinweis erscheinen, die Kategorie "Projekt" mit "Über" muss sichtbar sein, und "Forum", "Mitwirken" und "Fehler melden" müssen zum Fork-Repo führen.
 
 ### 5. Veröffentlichen
 
@@ -165,3 +175,4 @@ git checkout wearos-features -- <pfade>
 - Neue Strings der Fork-Funktionen in `strings_wearos_standalone.xml` ablegen, nicht in `strings.xml`.
 - Fork-spezifische Build-Einstellungen nur in `fork.gradle`, nie in den Modul-`build.gradle`-Dateien.
 - Fork-Icons nur in `fork-res/` ablegen und das Fork-README nur in `.github/README.md`. `ui/common` und das Root-`README.md` bleiben beim Upstream-Stand.
+- Einzige Ausnahme von Upstream-Dateien im Branding: `MainPreferencesFragment.java` und `BugReportFragment.java` (GPL-Hinweis entfernt, Links auf das Fork-Repo) sowie `preferences_about.xml` (App-Name als Titel des Versionseintrags), die englische `values/strings.xml`, `html-export-template.html` und `FeedDatabaseWriter.java` (Name "WearPod" in den Texten).

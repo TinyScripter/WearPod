@@ -50,7 +50,14 @@ Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
    git merge wearos-features
    ```
 
-   Hier kann nur das Branding kollidieren, praktisch nur die Zeile `apply from: "fork.gradle"` am Ende der Root-`build.gradle`. Dort Upstream-Inhalt übernehmen und die Zeile wieder anhängen.
+   Hier kann nur das Branding kollidieren:
+
+   - Root-`build.gradle`: Upstream-Inhalt übernehmen und die Zeile `apply from: "fork.gradle"` am Ende wieder anhängen
+   - `app/.../ui/screen/preferences/MainPreferencesFragment.java`: Der Upstream-Block mit dem Hinweis "If you can read this message, the developers of this modification violate the GNU General Public License (GPL)" bleibt entfernt, nur der Debug-Hinweis (`packageHash == -1190467065`) bleibt. "Forum" und "Mitwirken" zeigen auf `https://github.com/TinyScripter/AntennaPod`
+   - `ui/preferences/.../bugreport/BugReportFragment.java`: Die Buttons zeigen auf `https://github.com/TinyScripter/AntennaPod` und `https://github.com/TinyScripter/AntennaPod/issues`
+   - `ui/preferences/src/main/res/xml/preferences_about.xml`: Der Versionseintrag hat den Titel `@string/app_name` statt `@string/antennapod_version`
+   - `ui/i18n/src/main/res/values/strings.xml`: Nach dem Merge nach `AntennaPod` suchen und neue Texte auf "WearPod" umstellen. Ausnahmen stehen in `FORK_RELEASE.md`
+   - `storage/importexport/src/main/assets/html-export-template.html` und `storage/database/.../FeedDatabaseWriter.java`: "WearPod" und der Link zum Fork-Repo bleiben
 
    Das Fork-README (`.github/README.md`) und die Fork-Icons (`fork-res/`, eingebunden in `fork.gradle`) sind neue Dateien und verursachen keine Konflikte. Das Root-`README.md` und `ui/common` bleiben auf dem Upstream-Stand.
 
@@ -60,6 +67,8 @@ Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
    - Die Wear-App nutzt dieselbe Application-ID wie die Phone-App
    - `app-wearos/proguard.cfg` passt zu neuen Abhängigkeiten
    - `fork.gradle` findet `versionCode` und `versionName` noch in `app/build.gradle`
+   - Der App-Name erscheint in den Texten der App als "WearPod". `grep AntennaPod ui/i18n/src/main/res/values/strings.xml` darf nur die Ausnahmen aus `FORK_RELEASE.md` zeigen
+   - In den Einstellungen erscheint kein GPL-Hinweis, die Kategorie "Projekt" mit "Über" ist sichtbar, und "Forum", "Mitwirken" und "Fehler melden" führen zum Fork-Repo. Hat Upstream dort neue Links auf AntennaPod-Kanäle ergänzt, diese ebenfalls umstellen
 
 5. Bauen und testen (zuerst in `wearos-features`, danach in `wearos-support`):
 
