@@ -103,11 +103,11 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
             return true;
         });
         findPreference(PREF_VIEW_FORUM).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), "https://github.com/TinyScripter/AntennaPod");
+            IntentUtils.openInBrowser(getContext(), "https://github.com/TinyScripter/WearPod");
             return true;
         });
         findPreference(PREF_CONTRIBUTE).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), "https://github.com/TinyScripter/AntennaPod");
+            IntentUtils.openInBrowser(getContext(), "https://github.com/TinyScripter/WearPod");
             return true;
         });
         findPreference(PREF_SEND_BUG_REPORT).setOnPreferenceClickListener(preference -> {

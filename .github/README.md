@@ -78,7 +78,7 @@ If you are not sure whether a problem also occurs in the official app, please te
 - Use the **`play` flavor** of both apps. The Wear OS support is only part of this flavor because it needs Google Play Services. The `free` flavor does not contain it.
 - The apps on the phone and the watch must have the **same package name and be signed with the same key**. Otherwise, the watch does not find the phone and shows that the phone is not compatible. The debug builds (`.debug` suffix) and the release builds cannot be mixed.
 - Both devices must be paired through the Wear OS app of the watch, as usual.
-- Download the signed APKs for the phone and the watch from the [releases page](https://github.com/TinyScripter/AntennaPod/releases). Both are signed with the same key. You can also build them from source (see below).
+- Download the signed APKs for the phone and the watch from the [releases page](https://github.com/TinyScripter/WearPod/releases). Both are signed with the same key. You can also build them from source (see below).
 
 ### Phone
 

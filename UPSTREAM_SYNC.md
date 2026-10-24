@@ -53,8 +53,8 @@ Remotes: `upstream` = AntennaPod/AntennaPod, `origin` = eigener Fork.
    Hier kann nur das Branding kollidieren:
 
    - Root-`build.gradle`: Upstream-Inhalt übernehmen und die Zeile `apply from: "fork.gradle"` am Ende wieder anhängen
-   - `app/.../ui/screen/preferences/MainPreferencesFragment.java`: Der Upstream-Block mit dem Hinweis "If you can read this message, the developers of this modification violate the GNU General Public License (GPL)" bleibt entfernt, nur der Debug-Hinweis (`packageHash == -1190467065`) bleibt. "Forum" und "Mitwirken" zeigen auf `https://github.com/TinyScripter/AntennaPod`
-   - `ui/preferences/.../bugreport/BugReportFragment.java`: Die Buttons zeigen auf `https://github.com/TinyScripter/AntennaPod` und `https://github.com/TinyScripter/AntennaPod/issues`
+   - `app/.../ui/screen/preferences/MainPreferencesFragment.java`: Der Upstream-Block mit dem Hinweis "If you can read this message, the developers of this modification violate the GNU General Public License (GPL)" bleibt entfernt, nur der Debug-Hinweis (`packageHash == -1190467065`) bleibt. "Forum" und "Mitwirken" zeigen auf `https://github.com/TinyScripter/WearPod`
+   - `ui/preferences/.../bugreport/BugReportFragment.java`: Die Buttons zeigen auf `https://github.com/TinyScripter/WearPod` und `https://github.com/TinyScripter/WearPod/issues`
    - `ui/preferences/src/main/res/xml/preferences_about.xml`: Der Versionseintrag hat den Titel `@string/app_name` statt `@string/antennapod_version`
    - `ui/i18n/src/main/res/values/strings.xml`: Nach dem Merge nach `AntennaPod` suchen und neue Texte auf "WearPod" umstellen. Ausnahmen stehen in `FORK_RELEASE.md`
    - `storage/importexport/src/main/assets/html-export-template.html` und `storage/database/.../FeedDatabaseWriter.java`: "WearPod" und der Link zum Fork-Repo bleiben
