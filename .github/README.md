@@ -1,6 +1,6 @@
 # WearPod - based on AntennaPod
 
-[![License: GPL v3](https://img.shields.io/github/license/AntennaPod/AntennaPod)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/github/license/TinyScripter/WearPod)](https://www.gnu.org/licenses/gpl-3.0)
 
 **This is a private, unofficial fork of [AntennaPod](https://github.com/AntennaPod/AntennaPod).**
 It is not affiliated with, endorsed by or supported by the AntennaPod project.
@@ -37,7 +37,7 @@ You can install this build either via the Google Play Internal Test Track or man
 ---
 
 #### Option 2: Manual Download (GitHub Releases)
-If you prefer not to share your email address, you can download the APKs directly from the [Releases](https://github.com/swalczyk/AntennaPod/releases) page.
+If you prefer not to share your email address, you can download the APKs directly from the [Releases](https://github.com/TinyScripter/WearPod/releases) page.
 
 ⚠️ **Limitations of manual installation (Sideloading):**
 * **No Android Auto:** Sideloaded apps are blocked by Android Auto and will not appear on your car display without advanced developer settings.
@@ -68,7 +68,7 @@ See [wearos_concept.md](../wearos_concept.md) for the design of the feature.
 **Please do not report problems of this fork to the official AntennaPod forum or the official AntennaPod repository.**
 The AntennaPod developers do not know this fork and cannot help with it.
 
-Bug reports and feature requests for this fork can only be submitted [in this repository](https://github.com/swalczyk/AntennaPod/issues).
+Bug reports and feature requests for this fork can only be submitted [in this repository](https://github.com/TinyScripter/WearPod/issues).
 If you are not sure whether a problem also occurs in the official app, please test the official version first and report it to the official project only if it happens there, too.
 
 ## Installation

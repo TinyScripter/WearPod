@@ -34,4 +34,4 @@ This project is open-source software and is based on the original [AntennaPod pr
 
 ## 5. Contact and Inquiries
 If you have any questions, bug reports, or concerns regarding this privacy policy, please open an issue in the public repository:
-* **GitHub Issues:** https://github.com/swalczyk/AntennaPod/issues
+* **GitHub Issues:** https://github.com/TinyScripter/WearPod/issues
