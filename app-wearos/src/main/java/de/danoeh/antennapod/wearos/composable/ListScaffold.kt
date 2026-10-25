@@ -1,11 +1,8 @@
 package de.danoeh.antennapod.wearos.composable
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -16,7 +13,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.ScrollIndicator
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import de.danoeh.antennapod.ui.common.R as CommonR
 
@@ -30,7 +27,7 @@ fun ListScaffold(
     isEmpty: Boolean,
     content: ScalingLazyListScope.() -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    ScreenScaffold(scrollState = scrollState) {
         ScalingLazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = scrollState
@@ -69,6 +66,5 @@ fun ListScaffold(
                 else -> item { Text(stringResource(CommonR.string.wearos_no_items)) }
             }
         }
-        ScrollIndicator(state = scrollState, modifier = Modifier.align(Alignment.CenterEnd))
     }
 }

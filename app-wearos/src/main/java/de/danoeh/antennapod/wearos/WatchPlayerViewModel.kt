@@ -51,7 +51,11 @@ data class WatchPlayerUiState(
     val currentChapterIndex: Int = -1
 )
 
-class WatchPlayerViewModel(application: Application, private val itemId: Long) : AndroidViewModel(application) {
+class WatchPlayerViewModel(
+    application: Application,
+    private var itemId: Long,
+    private var startPlayback: Boolean
+) : AndroidViewModel(application) {
     private var isStarting = itemId != NO_ITEM
     private val _uiState = MutableStateFlow(WatchPlayerUiState(isLoading = isStarting))
     val uiState: StateFlow<WatchPlayerUiState> = _uiState
@@ -107,14 +111,18 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
     }
 
     private fun start(controller: MediaController) {
-        if (!isStarting || (controller.isPlaying && controller.currentMediaItem?.mediaId == itemId.toString())) {
+        if (!isStarting || (controller.isPlaying &&
+                (controller.currentMediaItem?.mediaId == itemId.toString() || !startPlayback))
+        ) {
             isStarting = false
             return
         }
         viewModelScope.launch {
             PositionSync.syncFromPhone(getApplication(), itemId)
             if (controller.currentMediaItem?.mediaId == itemId.toString()) {
-                controller.play()
+                if (startPlayback) {
+                    controller.play()
+                }
             } else {
                 val episodes = WatchEpisodeStore.episodes.value.filter {
                     it.status == DownloadStatus.DOWNLOADED &&
@@ -125,7 +133,9 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
                     val mediaItems = episodes.map { MediaItem.Builder().setMediaId(it.itemId.toString()).build() }
                     controller.setMediaItems(mediaItems, index, episodes[index].position.toLong())
                     controller.prepare()
-                    controller.play()
+                    if (startPlayback) {
+                        controller.play()
+                    }
                 }
             }
             isStarting = false
@@ -160,6 +170,14 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
             chapters = chapters.orEmpty(),
             currentChapterIndex = Chapter.getAfterPosition(chapters, position)
         )
+    }
+
+    fun open(itemId: Long, startPlayback: Boolean) {
+        this.itemId = itemId
+        this.startPlayback = startPlayback
+        isStarting = true
+        _uiState.value = _uiState.value.copy(isLoading = true)
+        controller?.let { start(it) }
     }
 
     fun playPause() {
@@ -199,11 +217,12 @@ class WatchPlayerViewModel(application: Application, private val itemId: Long) :
         private const val TAG = "WatchPlayerViewModel"
         const val NO_ITEM = -1L
 
-        fun factory(itemId: Long): ViewModelProvider.Factory = viewModelFactory {
+        fun factory(itemId: Long, startPlayback: Boolean): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 WatchPlayerViewModel(
                     checkNotNull(get(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY)),
-                    itemId
+                    itemId,
+                    startPlayback
                 )
             }
         }

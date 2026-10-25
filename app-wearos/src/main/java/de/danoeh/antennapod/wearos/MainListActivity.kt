@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -24,9 +22,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.ScrollIndicator
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.model.feed.FeedItem
@@ -46,31 +45,33 @@ class MainListActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
-                val uiState by viewModel.uiState.collectAsState()
-                MainListScreen(
-                    uiState = uiState,
-                    onOpenEpisodeDetail = { episode ->
-                        val intent = Intent(this, EpisodeDetailActivity::class.java).apply {
-                            putExtra(EpisodeDetailActivity.EXTRA_EPISODE, episode)
+                AppScaffold {
+                    val uiState by viewModel.uiState.collectAsState()
+                    MainListScreen(
+                        uiState = uiState,
+                        onOpenEpisodeDetail = { episode ->
+                            val intent = Intent(this@MainListActivity, EpisodeDetailActivity::class.java).apply {
+                                putExtra(EpisodeDetailActivity.EXTRA_EPISODE, episode)
+                            }
+                            startActivity(intent)
+                        },
+                        onOpenFeedList = {
+                            startActivity(Intent(this@MainListActivity, FeedListActivity::class.java))
+                        },
+                        onOpenWatchList = {
+                            startActivity(Intent(this@MainListActivity, WatchListActivity::class.java))
+                        },
+                        onOpenSettings = {
+                            startActivity(Intent(this@MainListActivity, WatchSettingsActivity::class.java))
+                        },
+                        onOpenEpisodeList = { path ->
+                            val intent = Intent(this@MainListActivity, EpisodeListActivity::class.java).apply {
+                                putExtra(EpisodeListActivity.EXTRA_PATH, path)
+                            }
+                            startActivity(intent)
                         }
-                        startActivity(intent)
-                    },
-                    onOpenFeedList = {
-                        startActivity(Intent(this, FeedListActivity::class.java))
-                    },
-                    onOpenWatchList = {
-                        startActivity(Intent(this, WatchListActivity::class.java))
-                    },
-                    onOpenSettings = {
-                        startActivity(Intent(this, WatchSettingsActivity::class.java))
-                    },
-                    onOpenEpisodeList = { path ->
-                        val intent = Intent(this, EpisodeListActivity::class.java).apply {
-                            putExtra(EpisodeListActivity.EXTRA_PATH, path)
-                        }
-                        startActivity(intent)
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -97,7 +98,7 @@ fun MainListScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    ScreenScaffold(scrollState = scrollState) {
         ScalingLazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = scrollState,
@@ -191,6 +192,5 @@ fun MainListScreen(
                 )
             }
         }
-        ScrollIndicator(state = scrollState, modifier = Modifier.align(Alignment.CenterEnd))
     }
 }

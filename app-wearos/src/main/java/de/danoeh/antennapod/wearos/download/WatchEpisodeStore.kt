@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.wearos.download
 
 import android.content.Context
-import android.os.Build
 import android.os.storage.StorageManager
 import android.util.AtomicFile
 import android.util.Log
@@ -10,6 +9,7 @@ import androidx.core.util.writeText
 import de.danoeh.antennapod.model.feed.FeedItem
 import de.danoeh.antennapod.net.sync.wearinterface.WearDataPaths
 import de.danoeh.antennapod.wearos.images.WatchImageLoader
+import de.danoeh.antennapod.wearos.tile.PlayerTileService
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,13 +72,11 @@ object WatchEpisodeStore {
 
     fun freeBytes(context: Context): Long {
         val dir = context.filesDir
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                val storageManager = context.getSystemService(StorageManager::class.java)
-                return storageManager.getAllocatableBytes(storageManager.getUuidForPath(dir))
-            } catch (e: IOException) {
-                Log.w(TAG, "Failed to get allocatable bytes", e)
-            }
+        try {
+            val storageManager = context.getSystemService(StorageManager::class.java)
+            return storageManager.getAllocatableBytes(storageManager.getUuidForPath(dir))
+        } catch (e: IOException) {
+            Log.w(TAG, "Failed to get allocatable bytes", e)
         }
         return dir.usableSpace
     }
@@ -170,5 +168,6 @@ object WatchEpisodeStore {
         } catch (e: IOException) {
             Log.e(TAG, "Failed to save watch episodes", e)
         }
+        PlayerTileService.onEpisodesChanged(context, _episodes.value)
     }
 }

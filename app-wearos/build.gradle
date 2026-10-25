@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "de.danoeh.antennapod"
-        minSdk 25
+        minSdk 26
         targetSdk 36
         versionCode 1
         versionName "1.0"
@@ -67,12 +67,16 @@ dependencies {
     implementation libs.google.play.services.wearable
     implementation libs.androidx.wear.compose.foundation
     implementation libs.androidx.wear.compose.material3
+    implementation libs.androidx.wear.tiles
+    implementation libs.androidx.wear.protolayout
+    implementation libs.androidx.wear.protolayout.material3
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.runtime
     implementation libs.androidx.lifecycle.runtime.compose
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.androidx.core.ktx
     implementation libs.kotlinx.coroutines.play.services
+    implementation libs.kotlinx.coroutines.guava
     implementation libs.androidx.activity.compose
     implementation libs.androidx.appcompat
     implementation libs.androidx.work.runtime
