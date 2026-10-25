@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.wearos
 
+import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.view.MotionEvent
@@ -7,16 +8,19 @@ import android.view.ViewConfiguration
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -24,26 +28,34 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.InputDeviceCompat
 import androidx.core.view.MotionEventCompat
 import androidx.core.view.ViewConfigurationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.wear.compose.foundation.AmbientMode
+import androidx.wear.compose.foundation.AmbientModeManager
+import androidx.wear.compose.foundation.AmbientTickEffect
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.itemsIndexed
+import androidx.wear.compose.foundation.rememberAmbientModeManager
 import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.LevelIndicator
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ProgressIndicatorDefaults
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.model.feed.Chapter
@@ -55,12 +67,14 @@ import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
 class WatchPlayerActivity : ComponentActivity() {
     private var rotaryScrollPixels = 0f
     private val volume = mutableStateOf<Float?>(null)
+    private lateinit var viewModel: WatchPlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,27 +83,43 @@ class WatchPlayerActivity : ComponentActivity() {
         } else {
             WatchPlayerViewModel.NO_ITEM
         }
-        val viewModel = ViewModelProvider(this, WatchPlayerViewModel.factory(itemId))[WatchPlayerViewModel::class.java]
+        val startPlayback = intent.getBooleanExtra(EXTRA_START_PLAYBACK, true)
+        viewModel = ViewModelProvider(
+            this,
+            WatchPlayerViewModel.factory(itemId, startPlayback)
+        )[WatchPlayerViewModel::class.java]
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
-                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-                val currentVolume by volume
-                LaunchedEffect(currentVolume) {
-                    delay(VOLUME_INDICATOR_DURATION)
-                    volume.value = null
+                AppScaffold {
+                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                    val currentVolume by volume
+                    val ambientModeManager = rememberAmbientModeManager()
+                    LaunchedEffect(currentVolume) {
+                        delay(VOLUME_INDICATOR_DURATION)
+                        volume.value = null
+                    }
+                    WatchPlayerScreen(
+                        uiState = uiState,
+                        volume = currentVolume,
+                        ambientModeManager = ambientModeManager,
+                        onPlayPause = { viewModel.playPause() },
+                        onSkipForward = { viewModel.skipForward() },
+                        onSkipBackward = { viewModel.skipBackward() },
+                        onNext = { viewModel.next() },
+                        onSetPlaybackSpeed = { viewModel.setPlaybackSpeed(it) },
+                        onSeekToChapter = { viewModel.seekToChapter(it) }
+                    )
                 }
-                WatchPlayerScreen(
-                    uiState = uiState,
-                    volume = currentVolume,
-                    onPlayPause = { viewModel.playPause() },
-                    onSkipForward = { viewModel.skipForward() },
-                    onSkipBackward = { viewModel.skipBackward() },
-                    onNext = { viewModel.next() },
-                    onSetPlaybackSpeed = { viewModel.setPlaybackSpeed(it) },
-                    onSeekToChapter = { viewModel.seekToChapter(it) }
-                )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val itemId = intent.getLongExtra(EXTRA_ITEM_ID, WatchPlayerViewModel.NO_ITEM)
+        if (itemId != WatchPlayerViewModel.NO_ITEM) {
+            viewModel.open(itemId, intent.getBooleanExtra(EXTRA_START_PLAYBACK, true))
         }
     }
 
@@ -114,6 +144,7 @@ class WatchPlayerActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_ITEM_ID = "item_id"
+        const val EXTRA_START_PLAYBACK = "start_playback"
         private const val VOLUME_STEP_PIXELS = 48f
         private val VOLUME_INDICATOR_DURATION = 2.seconds
     }
@@ -123,6 +154,7 @@ class WatchPlayerActivity : ComponentActivity() {
 fun WatchPlayerScreen(
     uiState: WatchPlayerUiState,
     volume: Float?,
+    ambientModeManager: AmbientModeManager,
     onPlayPause: () -> Unit,
     onSkipForward: () -> Unit,
     onSkipBackward: () -> Unit,
@@ -132,6 +164,12 @@ fun WatchPlayerScreen(
 ) {
     var speedDialogVisible by remember { mutableStateOf(false) }
     var chapterDialogVisible by remember { mutableStateOf(false) }
+
+    val ambientMode = ambientModeManager.currentAmbientMode
+    if (ambientMode is AmbientMode.Ambient) {
+        AmbientPlayerScreen(uiState = uiState, ambientModeManager = ambientModeManager, ambientMode = ambientMode)
+        return
+    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (uiState.isLoading) {
@@ -289,6 +327,67 @@ fun WatchPlayerScreen(
 }
 
 @Composable
+private fun AmbientPlayerScreen(
+    uiState: WatchPlayerUiState,
+    ambientModeManager: AmbientModeManager,
+    ambientMode: AmbientMode.Ambient
+) {
+    val currentUiState by rememberUpdatedState(uiState)
+    var position by remember { mutableIntStateOf(uiState.position) }
+    var burnInOffsetX by remember { mutableIntStateOf(0) }
+    var burnInOffsetY by remember { mutableIntStateOf(0) }
+    ambientModeManager.AmbientTickEffect {
+        position = currentUiState.position
+        if (ambientMode.isBurnInProtectionRequired) {
+            burnInOffsetX = Random.nextInt(-AMBIENT_BURN_IN_OFFSET, AMBIENT_BURN_IN_OFFSET + 1)
+            burnInOffsetY = Random.nextInt(-AMBIENT_BURN_IN_OFFSET, AMBIENT_BURN_IN_OFFSET + 1)
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize().background(Color.Black).offset {
+            IntOffset(burnInOffsetX.dp.roundToPx(), burnInOffsetY.dp.roundToPx())
+        },
+        contentAlignment = Alignment.Center
+    ) {
+        if (uiState.isLoading || uiState.title.isEmpty()) {
+            return@Box
+        }
+        if (uiState.duration > 0) {
+            CircularProgressIndicator(
+                progress = { position.toFloat() / uiState.duration.toFloat() },
+                modifier = Modifier.fillMaxSize().padding(2.dp),
+                strokeWidth = 2.dp,
+                colors = ProgressIndicatorDefaults.colors(
+                    indicatorColor = Color.Gray,
+                    trackColor = Color.Transparent
+                )
+            )
+        }
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = uiState.title,
+                style = MaterialTheme.typography.titleSmall,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = Converter.getDurationStringLong(position) + " / " +
+                    Converter.getDurationStringLong(uiState.duration),
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
 private fun ChapterMarkers(chapters: List<Chapter>, duration: Int, strokeWidth: Dp, modifier: Modifier) {
     val color = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.background
@@ -306,6 +405,7 @@ private fun ChapterMarkers(chapters: List<Chapter>, duration: Int, strokeWidth: 
 }
 
 private const val CHAPTER_MARKER_START_ANGLE = 270.0
+private const val AMBIENT_BURN_IN_OFFSET = 4
 private val CHAPTER_MARKER_RADIUS = 3.dp
 private val CHAPTER_MARKER_OUTLINE = 1.dp
 

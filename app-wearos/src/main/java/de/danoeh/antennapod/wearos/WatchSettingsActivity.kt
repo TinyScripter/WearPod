@@ -3,14 +3,11 @@ package de.danoeh.antennapod.wearos
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -18,10 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.RadioButton
-import androidx.wear.compose.material3.ScrollIndicator
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
@@ -37,12 +35,14 @@ class WatchSettingsActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
-                val values by WatchPreferences.observe(this).collectAsState()
-                WatchSettingsScreen(
-                    values = values,
-                    hasMobileData = hasMobileData,
-                    onChange = { transform -> WatchPreferences.update(this, transform) }
-                )
+                AppScaffold {
+                    val values by WatchPreferences.observe(this@WatchSettingsActivity).collectAsState()
+                    WatchSettingsScreen(
+                        values = values,
+                        hasMobileData = hasMobileData,
+                        onChange = { transform -> WatchPreferences.update(this@WatchSettingsActivity, transform) }
+                    )
+                }
             }
         }
     }
@@ -84,7 +84,7 @@ fun WatchSettingsScreen(
 ) {
     val scrollState = rememberScalingLazyListState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    ScreenScaffold(scrollState = scrollState) {
         ScalingLazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = scrollState
@@ -136,6 +136,5 @@ fun WatchSettingsScreen(
                 }
             }
         }
-        ScrollIndicator(state = scrollState, modifier = Modifier.align(Alignment.CenterEnd))
     }
 }

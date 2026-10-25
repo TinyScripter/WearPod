@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.dynamicColorScheme
@@ -35,20 +36,22 @@ class WatchListActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
-                val uiState by viewModel.uiState.collectAsState()
-                WatchListScreen(
-                    uiState = uiState,
-                    onPlay = { itemId ->
-                        val intent = Intent(this, WatchPlayerActivity::class.java).apply {
-                            putExtra(WatchPlayerActivity.EXTRA_ITEM_ID, itemId)
-                        }
-                        startActivity(intent)
-                    },
-                    onRetry = { viewModel.retry(it) },
-                    onMove = { itemId, newIndex -> viewModel.move(itemId, newIndex) },
-                    onRemove = { viewModel.remove(it) },
-                    onRemovePlayed = { viewModel.removePlayed() }
-                )
+                AppScaffold {
+                    val uiState by viewModel.uiState.collectAsState()
+                    WatchListScreen(
+                        uiState = uiState,
+                        onPlay = { itemId ->
+                            val intent = Intent(this@WatchListActivity, WatchPlayerActivity::class.java).apply {
+                                putExtra(WatchPlayerActivity.EXTRA_ITEM_ID, itemId)
+                            }
+                            startActivity(intent)
+                        },
+                        onRetry = { viewModel.retry(it) },
+                        onMove = { itemId, newIndex -> viewModel.move(itemId, newIndex) },
+                        onRemove = { viewModel.remove(it) },
+                        onRemovePlayed = { viewModel.removePlayed() }
+                    )
+                }
             }
         }
     }

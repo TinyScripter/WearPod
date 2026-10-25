@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.dynamicColorScheme
 import de.danoeh.antennapod.model.feed.Feed
@@ -25,13 +26,15 @@ class FeedListActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme(colorScheme = dynamicColorScheme(this) ?: MaterialTheme.colorScheme) {
-                val uiState by viewModel.uiState.collectAsState()
-                FeedListScreen(uiState = uiState, onOpenFeedEpisodes = { feedId ->
-                    val intent = Intent(this, EpisodeListActivity::class.java).apply {
-                        putExtra(EpisodeListActivity.EXTRA_PATH, WearDataPaths.feedEpisodesPath(feedId))
-                    }
-                    startActivity(intent)
-                })
+                AppScaffold {
+                    val uiState by viewModel.uiState.collectAsState()
+                    FeedListScreen(uiState = uiState, onOpenFeedEpisodes = { feedId ->
+                        val intent = Intent(this@FeedListActivity, EpisodeListActivity::class.java).apply {
+                            putExtra(EpisodeListActivity.EXTRA_PATH, WearDataPaths.feedEpisodesPath(feedId))
+                        }
+                        startActivity(intent)
+                    })
+                }
             }
         }
     }

@@ -70,6 +70,28 @@
             android:launchMode="singleTop"
             android:taskAffinity=".wearos" />
 
+        <activity
+            android:name="de.danoeh.antennapod.wearos.TileEntryActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <service
+            android:name="de.danoeh.antennapod.wearos.tile.PlayerTileService"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/wearos_tile_last_episode"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@mipmap/ic_launcher" />
+        </service>
+
         <service
             android:name="de.danoeh.antennapod.wearos.playback.WatchPlaybackService"
             android:exported="true"
