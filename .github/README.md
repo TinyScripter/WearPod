@@ -52,7 +52,9 @@ If you prefer not to share your email address, you can download the APKs directl
 - Downloads show a notification, wait for Wi-Fi if none is available and continue where they stopped after an interruption
 - Separate lists for playback on the watch and playback on the phone on the start screen
 - Own order of the episodes on the watch, which can be changed on the watch
-- Playback controls on the watch: play and pause, skip back and forward, next episode
+- Playback controls on the watch: play and pause, skip back and forward, next episode, jump to a chapter and change the playback speed. Chapters are also marked on the progress ring
+- Tile with the last played episode: tapping the image opens the player, the play button starts the playback directly
+- Ambient mode: with the always-on display enabled, the player stays visible in a power-saving black and white view
 - Skip amounts, playback speed and "smart mark as played" are taken over from the settings of the phone
 - Volume control with the rotating crown
 - Playback on Bluetooth headphones
