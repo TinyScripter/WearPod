@@ -25,4 +25,5 @@
     <string name="wearos_waiting_for_phone" tools:ignore="UnusedResources">Waiting for phone</string>
     <string name="wearos_waiting_for_connection" tools:ignore="UnusedResources">Waiting for connection</string>
     <string name="wearos_not_downloaded_on_phone" tools:ignore="UnusedResources">Not downloaded on phone</string>
+    <string name="wearos_tile_last_episode" tools:ignore="UnusedResources">Last episode</string>
 </resources>
